@@ -1,0 +1,7 @@
+[
+  {"name":"Treaty Era","start":1776,"end":1887,"color":"#4b6f8a"},
+  {"name":"Allotment Era","start":1887,"end":1934,"color":"#9a6b3f"},
+  {"name":"Reorganization Era","start":1934,"end":1953,"color":"#43847a"},
+  {"name":"Termination Era","start":1953,"end":1970,"color":"#a54d45"},
+  {"name":"Self-Determination Era","start":1970,"end":2030,"color":"#5d6999"}
+]

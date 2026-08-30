@@ -1,0 +1,15 @@
+{
+  "pl280": {
+    "mandatory": ["06","27","31","41","55"],
+    "alaska": "02",
+    "optional": ["12","16","19","30","32","53","49"],
+    "consentYear": 1968
+  },
+  "zones": [
+    {"era":"Treaty Era","state":"Generally state territory outside federally protected Indian country.","tribal":"Tribal nations, reservations, and treaty-recognized communities; internal Indian-on-Indian matters generally tribal before 1885.","federal":"Intercourse Acts framework; Major Crimes Act added enumerated offenses in 1885."},
+    {"era":"Allotment Era","state":"Generally outside Indian country; state reach increased on fee-patented land.","tribal":"Reservations and remaining Indian country; checkerboarding complicated authority.","federal":"General Crimes and Major Crimes framework in Indian country."},
+    {"era":"Reorganization Era","state":"Generally outside Indian country, subject to state-specific exceptions.","tribal":"IRA/OIWA governmental areas and Indian country, subject to federal limits.","federal":"Indian country under 18 USC 1151 and federal General/Major Crimes Acts."},
+    {"era":"Termination Era","state":"PL-280 areas, ordinary state territory, and terminated-tribe property regimes.","tribal":"Indian country not terminated and tribal governments where retained.","federal":"Generally Indian country outside PL-280 and specifically reserved federal matters."},
+    {"era":"Self-Determination Era","state":"Depends on PL-280, retrocession, special statutes, and Indian-country status.","tribal":"Strengthened through self-determination, TLOA, and VAWA authorities.","federal":"Concurrent with tribal jurisdiction in many Indian-country cases; PL-280 exceptions remain."}
+  ]
+}

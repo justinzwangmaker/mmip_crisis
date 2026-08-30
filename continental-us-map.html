@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MMIP Case Map</title>
+  <style>
+    html, body, main, #map { width: 100%; height: 100%; margin: 0; }
+    main { position:relative; box-sizing:border-box; padding-left:300px; transition:padding-left .22s ease; }.guide-collapsed main { padding-left:0; }
+    body { overflow: hidden; background:#dcecf2; color:#16303b; font-family:system-ui, sans-serif; }
+    #map { display:block; touch-action:none; }
+    .ocean { fill:#dcecf2; }
+    .state { fill:#edf2f4; stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; }
+    .border { fill:none; stroke:#fff; stroke-width:.8; vector-effect:non-scaling-stroke; pointer-events:none; }
+    .case { fill:#c92828; stroke:#fff; stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .case:hover, .case:focus { fill:#8e1010; outline:none; }
+    .camp { fill:#24894b; stroke:#fff; stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .camp-region { fill:#146b37; stroke:#fff; stroke-width:1.3; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .camp:hover, .camp:focus, .camp-region:hover, .camp-region:focus { fill:#0c4d27; outline:none; }
+    .extraction { fill:#2166b1; stroke:#fff; stroke-width:1.3; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .basin { fill:#2166b1; fill-opacity:.20; stroke:#2166b1; stroke-width:1.2; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .extraction:hover, .extraction:focus, .basin:hover, .basin:focus { fill:#12477f; outline:none; }
+    .community { fill:#7b3f98; fill-rule:evenodd; stroke:#54276c; stroke-width:1; stroke-linejoin:round; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .community:hover, .community:focus { fill:#54276c; outline:none; }
+    .proximity-zone { fill-opacity:.16; stroke-width:1.2; vector-effect:non-scaling-stroke; pointer-events:none; }
+    .case-zone { fill:#c92828; stroke:#8e1010; }.community-zone { fill:#7b3f98; stroke:#54276c; }.camp-zone { fill:#24894b; stroke:#146b37; }.extraction-zone { fill:#123f73; stroke:#123f73; }
+    .scale-bar { pointer-events:none; fill:#16303b; font-size:11px; font-weight:600; }.scale-bar line { stroke:#16303b; stroke-width:1.4; vector-effect:non-scaling-stroke; }.scale-bar rect { stroke:#16303b; stroke-width:1; vector-effect:non-scaling-stroke; }
+    .cluster { fill:#a91919; stroke:#fff; stroke-width:1.4; vector-effect:non-scaling-stroke; cursor:pointer; }
+    .cluster-label { fill:#fff; font-size:10px; font-weight:700; pointer-events:none; text-anchor:middle; dominant-baseline:central; }
+    .title { font-size:19px; font-weight:750; fill:#16303b; display:none; }.subtitle { font-size:12px; fill:#42616d; display:none; }
+    .control, .legend, #case-panel { position:absolute; background:rgba(255,255,255,.95); border:1px solid #bdd0d8; box-shadow:0 2px 12px rgba(20,48,59,.14); }
+    .control { left:322px; bottom:22px; border-radius:7px; padding:8px 11px; color:#16303b; cursor:pointer; font:600 13px system-ui; }.guide-collapsed .control { left:22px; }
+    .layer-controls { position:absolute; left:auto; right:22px; top:18px; bottom:auto; padding:9px 11px; border-radius:7px; font-size:12px; line-height:1.6; }.guide-collapsed .layer-controls { left:auto; }
+    .layer-controls label { display:block; cursor:pointer; }.layer-controls input { accent-color:#2166b1; vertical-align:-2px; }
+    .legend { right:22px; bottom:22px; border-radius:8px; padding:12px 14px; width:242px; font-size:12px; line-height:1.35; }
+    .section-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }.legend strong { display:block; margin-bottom:5px; }.section-heading strong { margin-bottom:0; }.collapse-button { border:1px solid #9eb7c1; border-radius:4px; background:#f7fbfc; color:#16303b; cursor:pointer; font:700 14px/1 system-ui; min-width:25px; min-height:23px; }.legend.is-collapsed, .layer-controls.is-collapsed, .map-header-box.is-collapsed { width:auto; padding:7px 9px; }.is-collapsed .section-body { display:none; }.dot { display:inline-block; width:11px; height:11px; margin-right:7px; border-radius:50%; background:#c92828; vertical-align:-1px; }
+    #case-panel { top:18px; right:18px; width:min(360px,calc(100vw - 36px)); max-height:calc(100vh - 170px); overflow:auto; border-radius:10px; padding:17px; z-index:2; }
+    #case-panel[hidden] { display:none; } #case-panel h2 { font-size:18px; margin:0 25px 7px 0; line-height:1.2; } #case-panel p { margin:0 0 13px; font-size:12px; color:#42616d; }
+    #case-panel dl { margin:0; } #case-panel dt { margin-top:10px; color:#49636d; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; } #case-panel dd { margin:2px 0 0; font-size:13px; line-height:1.35; }
+    #case-panel a { color:#075c94; } #close-panel { position:absolute; right:9px; top:7px; border:0; background:transparent; color:#42616d; cursor:pointer; font-size:23px; line-height:1; }
+    .map-header-box { position:absolute; top:18px; left:322px; width:min(410px,calc(100vw - 344px)); padding:10px 12px; border:1px solid #bdd0d8; border-radius:8px; background:rgba(255,255,255,.95); box-shadow:0 2px 12px rgba(20,48,59,.14); font-size:12px; line-height:1.35; z-index:1; transition:left .22s ease,width .22s ease; }.guide-collapsed .map-header-box { left:22px; width:min(410px,calc(100vw - 44px)); }.map-header-box strong { font-size:16px; }.map-header-box p { margin:7px 0 5px; color:#42616d; }.map-header-box #status { color:#42616d; font-size:11px; }
+    .story-panel { position:fixed; top:0; left:0; bottom:0; width:270px; padding:15px 14px; border:1px solid #bdd0d8; border-left:0; border-radius:0 10px 10px 0; background:rgba(255,255,255,.97); box-shadow:2px 2px 12px rgba(20,48,59,.14); transition:width .22s ease,padding .22s ease; z-index:3; overflow:auto; }.story-panel.is-minimized { width:42px; padding:10px 5px; overflow:hidden; }.story-panel.is-minimized nav { display:none; }.story-panel h2 { margin:0 0 11px; font-size:15px; }.story-panel .story-heading { display:block; width:100%; padding:9px 10px; margin:0 0 6px; border:1px solid #c7d8de; border-radius:6px; background:#f7fbfc; color:#16303b; text-align:left; cursor:pointer; font:650 13px system-ui; }.story-panel .story-heading:hover, .story-panel .story-heading:focus, .story-panel .story-heading.is-active { background:#d9edf8; outline:2px solid #74a7b8; outline-offset:1px; }.story-tab { position:absolute; top:10px; right:10px; border:1px solid #96b3bf; border-radius:5px; background:#ffffff; color:#16303b; cursor:pointer; box-shadow:1px 1px 5px rgba(20,48,59,.12); padding:6px 8px; font:700 12px system-ui; }.story-panel.is-minimized .story-tab { position:static; width:100%; height:100%; padding:8px 0; writing-mode:vertical-rl; letter-spacing:.04em; }
+    .story-panel .story-subheading { display:block; width:calc(100% - 16px); margin:-1px 0 8px 16px; padding:7px 9px; border:0; border-left:3px solid #2166b1; background:#e8f3f8; color:#12477f; cursor:pointer; text-align:left; font:650 12px system-ui; }.story-panel .story-subheading:hover, .story-panel .story-subheading:focus, .story-panel .story-subheading.is-active { background:#d7ebf4; outline:2px solid #74a7b8; outline-offset:1px; }
+    .research-view { position:fixed; inset:0 0 0 300px; display:none; padding:30px; background:#eef6f8; z-index:2; overflow:auto; }.guide-collapsed .research-view { left:0; }.research-view.is-visible { display:block; }.research-article { max-width:900px; margin:0 auto; padding:28px clamp(22px,5vw,58px); border:1px solid #bdd0d8; border-radius:12px; background:#fff; box-shadow:0 2px 18px rgba(20,48,59,.13); }.research-article h1 { margin:0 100px 18px 0; color:#16303b; font-size:clamp(26px,4vw,40px); line-height:1.12; }.research-article p { margin:0 0 17px; color:#244651; font-size:16px; line-height:1.65; }.minimize-research { position:absolute; top:22px; right:25px; border:1px solid #7ba4b3; border-radius:6px; background:#f7fbfc; color:#16303b; padding:8px 11px; cursor:pointer; font:650 13px system-ui; }
+    .timeline-explorer { position:fixed; inset:90px 22px 22px 322px; display:none; justify-content:center; z-index:2; pointer-events:none; }.guide-collapsed .timeline-explorer { left:22px; }.timeline-explorer.is-visible { display:flex; }.timeline-card { width:min(820px,100%); overflow:auto; padding:22px 26px; border:1px solid #8eafbb; border-radius:12px; background:rgba(255,255,255,.97); box-shadow:0 3px 20px rgba(20,48,59,.2); pointer-events:auto; }.timeline-card h1 { margin:0 125px 5px 0; font-size:26px; }.timeline-card > p { margin:0 0 16px; color:#42616d; font-size:12px; }.timeline-controls { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; margin-bottom:16px; }.timeline-controls input { width:100%; accent-color:#2166b1; }.timeline-controls select { grid-column:1 / -1; width:100%; padding:8px; border:1px solid #91adb7; border-radius:5px; background:#fff; color:#16303b; font:600 13px system-ui; }.timeline-year { min-width:52px; border-radius:5px; background:#16303b; color:#fff; padding:7px 8px; text-align:center; font-weight:700; }.timeline-event h2 { margin:0 0 3px; font-size:21px; }.timeline-event .era { margin:0 0 14px; color:#42616d; font-size:13px; }.timeline-event h3 { margin:17px 0 5px; font-size:14px; }.timeline-event p { margin:0; color:#294b56; font-size:13px; line-height:1.48; }.authority-visual { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:11px 0 13px; }.authority-box { min-height:116px; padding:10px; border-radius:7px; color:#17303a; font-size:12px; line-height:1.35; }.authority-box strong { display:block; margin-bottom:5px; font-size:13px; }.authority-tribal { background:#eadcf0; border-top:5px solid #7b3f98; }.authority-federal { background:#dcecf2; border-top:5px solid #2166b1; }.authority-state { background:#deefe4; border-top:5px solid #24894b; }.land-symbol { display:flex; align-items:center; gap:12px; margin:9px 0; padding:10px; border:1px dashed #b48933; border-radius:7px; background:#fff8dd; }.land-symbol .communal-land { display:grid; grid-template-columns:repeat(3,12px); gap:3px; width:42px; }.land-symbol .communal-land span { width:12px; height:12px; border-radius:2px; background:#d9ad23; }.land-symbol .fragmented-land span:nth-child(2), .land-symbol .fragmented-land span:nth-child(5), .land-symbol .fragmented-land span:nth-child(8) { background:#fff8dd; border:1px solid #d9ad23; }.land-symbol p { font-size:12px; }.timeline-source { display:block; margin-top:7px; color:#075c94; font-size:12px; }.minimize-timeline { position:absolute; top:18px; right:24px; border:1px solid #7ba4b3; border-radius:6px; background:#f7fbfc; color:#16303b; padding:8px 11px; cursor:pointer; font:650 13px system-ui; }
+    @media (max-width:620px) { .legend { display:none; } #case-panel { max-height:45vh; } }
+  </style>
+</head>
+<body>
+  <main aria-label="United States map of documented MMIP cases">
+    <svg id="map" role="img" aria-labelledby="map-title map-desc">
+      <title id="map-title">Documented MMIP cases</title>
+      <desc id="map-desc">A zoomable United States map. Red circles show approximate town, reservation, or public-landmark locations from the MMIP Case Data workbook. Low zoom levels group nearby cases into clusters.</desc>
+      <rect class="ocean" width="100%" height="100%"></rect>
+      <text class="title" x="24" y="34">Documented MMIP cases</text>
+      <text class="subtitle" x="24" y="53">Red dots use the workbook's town, reservation, or public-landmark description—not a precise incident location.</text>
+      <g id="map-content"><g id="states"></g><g id="case-zones"></g><g id="community-zones"></g><g id="communities"></g><g id="basins"></g><g id="extraction-zones"></g><g id="extraction-sites"></g><g id="camp-zones"></g><g id="camps"></g><g id="regions"></g><g id="clusters"></g><g id="cases"></g></g>
+      <g id="scale-bar" class="scale-bar" aria-label="Distance scale showing 10 through 500 miles"></g>
+    </svg>
+    <aside class="map-header-box" id="map-header-box"><div class="section-heading"><strong>Documented MMIP cases</strong><button class="collapse-button" id="toggle-map-header" type="button" aria-expanded="true" aria-controls="map-header-body" aria-label="Minimize map information">−</button></div><div class="section-body" id="map-header-body"><p>Red dots use the workbook’s town, reservation, or public-landmark description—not a precise incident location.</p><div id="status" role="status">Loading documented case records…</div></div></aside>
+    <button class="control" id="reset" type="button">Reset view</button>
+    <aside class="story-panel" id="story-panel" aria-label="Map research sections"><button class="story-tab" id="toggle-story-panel" type="button" aria-expanded="true" aria-controls="story-navigation">Minimize</button><nav id="story-navigation" aria-label="Research section navigation"><h2>Research guide</h2><button class="story-heading" type="button" data-research-section="Crisis Overview">Crisis Overview</button><button class="story-heading" type="button" data-research-section="The Extraction Triad">The Extraction Triad</button><button class="story-heading" type="button" data-research-section="Checkerboard History">Checkerboard History</button><button class="story-subheading" id="open-timeline-explorer" type="button">Jurisdiction Timeline Explorer</button><button class="story-heading" type="button" data-research-section="Jurisdictional Checkerboard">Jurisdictional Checkerboard</button><button class="story-heading" type="button" data-research-section="So What?">So What?</button><button class="story-heading" type="button" data-research-section="Now What?">Now What?</button><button class="story-heading" type="button" data-research-section="Bibliography">Bibliography</button></nav></aside>
+    <section class="research-view" id="research-view" hidden aria-live="polite"><button class="minimize-research" id="minimize-research" type="button">Return to map</button><article class="research-article"><h1 id="research-title"></h1><div id="research-text"></div></article></section>
+    <section class="timeline-explorer" id="timeline-explorer" hidden aria-live="polite"><article class="timeline-card"><button class="minimize-timeline" id="minimize-timeline" type="button">Return to map</button><h1>Jurisdiction Timeline Explorer</h1><p>1776-present, using the workbook’s 25 selected laws. Conceptual legal and land effects only: this display does not claim precise jurisdictional or treaty boundaries.</p><div class="timeline-controls"><input id="timeline-range" type="range" min="0" max="0" value="0" aria-label="Timeline event"><output class="timeline-year" id="timeline-year">...</output><select id="timeline-select" aria-label="Select law event"><option>Loading timeline events...</option></select></div><div class="timeline-event"><h2 id="timeline-law"></h2><p class="era" id="timeline-era"></p><h3>Plain-language explanation</h3><p id="timeline-explanation"></p><h3>Conceptual authority shift or overlap</h3><div class="authority-visual"><div class="authority-box authority-tribal"><strong>Tribal</strong><span id="timeline-tribal"></span></div><div class="authority-box authority-federal"><strong>Federal</strong><span id="timeline-federal"></span></div><div class="authority-box authority-state"><strong>State</strong><span id="timeline-state"></span></div></div><h3>Indigenous land status</h3><div class="land-symbol"><div class="communal-land" id="timeline-land-symbol"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><p id="timeline-land"></p></div><h3>Where it applied and PL-280 implications</h3><p id="timeline-where"></p><h3>What changed from the preceding event</h3><p id="timeline-change"></p><a class="timeline-source" id="timeline-source" target="_blank" rel="noopener"></a></div></article></section>
+    <aside class="legend" id="map-legend"><div class="section-heading"><strong>How to use this map</strong><button class="collapse-button" id="toggle-legend" type="button" aria-expanded="true" aria-controls="legend-body" aria-label="Minimize map instructions">−</button></div><div class="section-body" id="legend-body"><span class="dot"></span>Documented case location proxy<br><span class="dot" style="background:#24894b;border-radius:0"></span>Named man-camp facility<br><span class="dot" style="background:#146b37;transform:rotate(45deg)"></span>Documented region, no named facility<br><span class="dot" style="background:#2166b1;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>Named extraction site<br><span class="dot" style="background:#2166b1;opacity:.45"></span>Approximate basin-wide zone<br><span class="dot" style="background:#7b3f98;opacity:.6"></span>Indigenous land location proxy<br><br>Transparent purple, green, and navy zones mark groups of two or more corresponding locations within 30 miles. Scroll or pinch to zoom.</div></aside>
+    <div class="control layer-controls" id="map-layer-controls" aria-label="Map layer controls"><div class="section-heading"><strong>Map layers</strong><button class="collapse-button" id="toggle-layer-controls" type="button" aria-expanded="true" aria-controls="layer-controls-body" aria-label="Minimize map layers">−</button></div><div class="section-body" id="layer-controls-body">
+      <label><input id="toggle-cases" type="checkbox" checked> MMIP cases</label>
+      <label><input id="toggle-case-zones" type="checkbox" checked> MMIP-case proximity zones (50 miles)</label>
+      <label><input id="toggle-camps" type="checkbox" checked> Named man-camp facilities</label>
+      <label><input id="toggle-camp-zones" type="checkbox" checked> Man-camp proximity zones</label>
+      <label><input id="toggle-camp-regions" type="checkbox" checked> Man-camp regions</label>
+      <label><input id="toggle-sites" type="checkbox" checked> Named extraction sites</label>
+      <label><input id="toggle-extraction-zones" type="checkbox" checked> Extraction-site proximity zones</label>
+      <label><input id="toggle-basins" type="checkbox" checked> Basin-wide extraction zones</label>
+      <label><input id="toggle-communities" type="checkbox" checked> Indigenous land boundaries</label>
+      <label><input id="toggle-community-zones" type="checkbox" checked> Indigenous-land proximity zones</label></div>
+    </div>
+    <aside id="case-panel" hidden aria-live="polite"><button id="close-panel" type="button" aria-label="Close case details">×</button><div id="case-details"></div></aside>
+  </main>
+
+  <script type="module">
+    import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+    import { feature, mesh } from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
+    import us from "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json/+esm";
+    import * as XLSX from "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm";
+
+    // Coordinates are deliberately town/reservation/public-landmark approximations derived from
+    // each workbook location description. Null means the workbook gives no mappable locality.
+    const places = {
+      "Olivia Lone Bear":[-102.95,47.98],"Renzo Bull Head":[-100.63,46.08],"Kara Lynn Mauai":[-100.63,46.08],
+      "Hanna Harris":[-106.67,45.62],"Kaysera Stops Pretty Places":[-107.90,45.73],"Henny Scott":[-106.67,45.62],"Selena Not Afraid":[-107.82,45.40],"Jermain Charlo":[-114.00,46.87],
+      "Ashlynne Mike":[-108.69,36.79],"Jocelyn Watt and Rudy Perez":[-108.38,43.02],"Jade Wagon":[-108.80,43.15],"Abigale (Abigail) Washakie":[-108.38,43.02],"Adrianna Goggles":[-108.80,43.15],
+      "Delema Lou Sits Poor":[-102.56,43.03],"Donna Marie Larrabee":[-103.23,44.08],"Sharon Bald Eagle":[-103.47,43.43],"Victoria Eagleman":[-99.58,44.08],"Richynda Roubideaux":[-100.85,43.23],"Michelle Elbow Shield":[-102.56,43.03],"Anna Mae Aquash":[-102.56,43.03],
+      "Sukakee Manyhides":[-110.40,40.16],"Jamie Yazzie":[-110.22,36.10],"Ella Mae Begay":[-110.02,36.70],"Wyatt James Juan":[-111.90,32.10],"Michelle Lyn West":[-111.90,32.10],"Misty Rainy Bedonie":[-109.50,36.10],"Laverda Sorrell":[-109.50,36.10],"Nicole Joe":[-111.65,35.20],
+      "Bernadine Frost":[-107.63,37.12],"Odell J. Vest":[-108.74,37.21],"Burch-Woodhull":[-107.63,37.12],
+      "Rosenda Strong":[-120.31,46.38],"Daisy Mae Heath":[-120.74,46.39],"Karen Johnley Wallahee":[-120.54,46.40],"William Olney":[-120.31,46.38],"Latoya Salazar":[-120.50,46.60],"Gerald Wyena":[-120.31,46.38],"Leona Sharon Kinsey":[-122.29,47.17],"Unidentified Woman (Cascadia, OR remains)":[-122.48,44.39],
+      "Kathleen Jo Henry":[-149.90,61.22],"Veronica Abouchuk":[-149.90,61.22],"Cassandra Boskofsky":[-149.90,61.22],"Ida Rose Jacomet":[-147.72,64.84],"Valerie Sifsof":[-148.40,60.40],"Lorraine Juanita Ginnis":[-145.25,66.56],
+      "Sheila St. Clair":[-95.85,47.10],"Unnamed victim, Red Lake Reservation homicide":[-95.02,47.88],"Melissa Beson":[-89.89,45.97],"Gene J. Cloud Jr.":[-90.84,44.29],"Lisa Lynn Ninham":[-88.71,45.00],"Nevaeh Leigh Kingbird":[-94.88,47.47],"Angeline Whitebird-Sweet":[-90.69,46.58],"Linda Amy Dickenson":[-88.71,45.00],
+      "Lori Lee Farmer, Michelle Guse, Doris Denise Milner ('Girl Scout Murders')":[-95.17,36.20],"Emily Morgan":[-95.50,34.50],
+      "Emmilee Risling":[-124.08,41.54],"Rachel Sloan":[-123.80,39.30],"Khadijah Britton":[-123.10,39.70],"Matthew Broncho":[-112.45,43.00],"Kacy Ross":[-116.88,47.33]
+    };
+    const additionalLocationCenters = {
+      "Peshawbestown, MI":[-85.60,45.00],"Pine Ridge, SD":[-102.56,43.03],"Boynton, OK":[-95.68,35.65],"Bristow, OK":[-96.39,35.83],"Sandy, UT":[-111.89,40.57],"Kyle, SD":[-102.18,43.43],"Mobridge, SD":[-100.43,45.54],"Pierre, SD":[-100.35,44.37],"Rapid City, SD":[-103.23,44.08],"Pelahatchie, MS":[-89.79,32.31],"Lakeside, AZ":[-109.98,34.17],"Gila River Indian Reservation, AZ":[-111.80,33.20],"Bylas, AZ":[-110.12,33.13],"Auberry, CA":[-119.49,37.08],"Atoka, OK":[-96.13,34.39],"Shiprock, NM":[-108.69,36.79],"Lovelock, NV":[-118.47,40.18],"Tama, IA":[-92.58,41.97],"San Pedro Village, AZ":[-111.90,32.10],"Gila River Reservation, Maricopa County, AZ":[-111.80,33.20],"Phoenix, AZ":[-112.07,33.45],"Wet Camp Village, AZ":[-111.90,32.10],"Billings, MT":[-108.50,45.78],"Red Lake, MN":[-95.02,47.88],"San Carlos, AZ":[-110.45,33.35],"Laguna, NM":[-107.20,35.04],"Grand Island, NE":[-98.34,40.93],"Cherokee, NC":[-83.32,35.47],"Indian Route 06, San Carlos, AZ":[-110.45,33.35],"Peridot, AZ":[-110.45,33.30],"Tumbleweed Runaway Center, Billings, MT":[-108.50,45.78],"Box Elder, MT":[-109.87,48.29],"Crow Agency, MT":[-107.46,45.60],"Wyola, MT":[-107.37,45.15],"Muskogee, OK":[-95.37,35.75],"Fort Totten, ND":[-98.99,47.98],"Choctaw, MS":[-89.23,32.79],"Cloquet, MN":[-92.46,46.72],"Browning, MT":[-113.01,48.56],"Mannford, OK":[-96.35,36.13],"Milwaukee, WI":[-87.90,43.04],"Locust Grove, OK":[-95.17,36.20],"Tulsa, OK":[-95.99,36.15],"Seminole, OK":[-96.67,35.25],"Broken Arrow, OK":[-95.79,36.05],"Klagetoh, AZ":[-109.75,35.55],"Chiloquin, OR":[-121.87,42.58],"Garryowen, MT":[-107.31,45.59],"Madras, OR":[-121.13,44.63],"Parmelee, SD":[-101.34,43.30],"St. Mary's, MT":[-113.43,48.75],"Fox, OK":[-97.80,34.38],"Box Elder, SD":[-102.95,44.11],"Village of Kykotsmovi, AZ":[-110.62,35.87],"Riverton, WY":[-108.38,43.02],"Kennewick, WA":[-119.14,46.21],"Pine Ridge, SD — Calico Community":[-102.56,43.03],"Mt. Pleasant, MI":[-84.77,43.60]
+    };
+    const round2LocationCenters = {
+      "Tulsa, OK — 6302 S Peoria Ave, Muscogee Creek Reservation":[-95.98,36.07],"Coalmine, AZ — Navajo Nation Joint Use Area":[-110.13,36.35],"Mesa / Gila County near San Carlos Apache Reservation, AZ":[-110.45,33.35],"Tulalip Reservation / North Snohomish County, WA":[-122.27,48.08],"Gallup, NM":[-108.74,35.53],"Albuquerque, NM":[-106.65,35.08],"Menominee Indian Reservation, WI — Tomow Overlook / Old South Branch Rd":[-88.72,45.00],"Menominee Indian Reservation, Keshena, WI":[-88.63,44.88],"Shonto, AZ — Navajo Nation":[-110.66,36.59],"Counselor, NM — Navajo Nation":[-107.55,36.18],"Shiprock, NM — Navajo Nation":[-108.69,36.79],"Vanderwagen, NM":[-108.70,35.27],"Eagle Butte, SD — near Willow St and US-212":[-101.23,44.99],"House 717, Cheyenne River Sioux Reservation, SD":[-101.23,44.99],"Chapel Hill, NC":[-79.06,35.91],"Port Angeles / Clallam County, WA":[-123.43,48.12],"Nome, AK":[-165.41,64.50],"Kake, AK":[-133.94,56.97]
+    };
+    const round2Names = {"angel-beach":"Angel Beach","maleeka-mollie-boone":"Maleeka Mollie Boone","emily-pike":"Emily Pike","mary-johnson-davis":"Mary Johnson Davis","anthonette-christine-cayedito":"Anthonette Christine Cayedito","pepita-redhair":"Pepita Redhair","rae-elaine-tourtillot":"Rae Elaine Tourtillot","unsolved-katelyn-kelley":"Katelyn Kelley","caldwell-dewyne-smith":"Caldwell Dewyne Smith","wilson-joe-chiquito":"Wilson Joe Chiquito","herbert-whitehorse":"Herbert Whitehorse","durwin-merrill-davis":"Durwin Merrill Davis","jessie-wallace-cook":"Jessie Wallace Cook","carmen-charger":"Carmen Charger","faith-hedgepeth-case":"Faith Hedgepeth","nome-alaska-review-rape-cold-cases-hits-wall":"Nome case (source profile)","arrest-made-in-kakes-mackenzie-howard-case":"Mackenzie Howard"};
+    const fields = [
+      ["Crime type", "crime_type"], ["Reported by", "reported_by"], ["Responded by", "responded_by"], ["Declined by", "declined_by"],
+      ["Final jurisdiction", "final_jurisdiction"], ["Jurisdiction status", "jurisdiction_status"], ["Prosecution status", "prosecution_status"],
+      ["Contested status", "contested_status"], ["Contested reason", "contested_reason"]
+    ];
+    const researchSections = {
+      "Crisis Overview": [
+        "Most missing and unidentified cases involving Indigenous persons occur off tribal land, making it plausible that many violent victimizations of Indigenous persons occur off tribal lands too. (Hanson, 2023, p.17) This underscores how this crisis is not something restricted to within Indigenous communities, but embedded within the United States itself.",
+        "While Indigenous persons living off tribal lands can access federal victim services resources, many of such resources dedicated to Indigenous experiences are directed towards tribal communities rather than urban areas. (Hanson, 2023, p.17) When considering how most Indigenous persons live off-reservation and that many missing persons cases happen off tribal lands, this proves problematic.",
+        "There are many resources to help law enforcement pursue MMIP cases such as the National Crime Information Center and the National Missing and Unidentified Persons System, but their gaps in available data fail to provide a comprehensive picture of the crisis. (Hanson, 2023, p.2) Therefore, this reminds us that many cases may go unreported and thus, not pursued.",
+        "In recent years, the federal government has launched initiatives to improve federal, state, and tribal law enforcement coordination like the Operation Lady Justice Task Force and passed legislation to improve MMIP data collection like Savanna's Act in 2020. (Hanson, 2023, pp.23-26) While this is a step in the right direction, one of the most crucial factors that inhibits justice is not the lack of data or law enforcement coordination. It is the contested legal jurisdiction over many MMIP cases."
+      ],
+      "The Extraction Triad": [
+        "Man camps, which are housing sites to accomodate predominantly-male workers working in resource extraction, are documented \"hotbeds of sexual violence.\" (Condes, 2021, p.517) This is a consequence of what I will define as a \"triad\" of extraction: resource extraction; labor extraction, the use of physical labor in rural area; and land extraction, the process of taking and allotting land originally of Indigenous communities.",
+        "Annita Lucchesi, a Southern Cheyenne woman working for the National Indigenous Women's Resource Council, recalled a statement from an oil worker: \"in North Dakota you can take whatever pretty little Indian girl that you like and you can do whatever you want and police don't give a fuck about it.\" (Condes, 2021, pp.530-531) This reflects how oftentimes, tribal police simply cannot prosecute crimes committed by non-Indigenous individuals.",
+        "One reason for this is that communities near man camps rarely have enough resources to accommodate rapid population increases as a result of an oil boom, including tribal law enforcement: many have reported being unable to handle the increased crime as a result of man camps. (Condes, 2021, pp.529-530) The problem is multifaceted: both the inability to prosecute and the behavior of man camp laborers exacerbate the MMIP crisis.",
+        "Essentially, the root problem behind many of these MMIP cases is not the inability to find the perpetrator, but the inability to prosecute them. This inability to prosecute comes from a series of historical laws creating a legal jurisdictional \"checkerboard\", which I will discuss in the next section."
+      ],
+      "Checkerboard History": [
+        "Public Law 280 gave the states of California, Minnesota, Nebraska, Oregon, and Wisconsin jurisdiction over offenses committed by or against Indigenous peoples within tribal lands --- with the exception of Red Lake Reservation in Minnesota; Warm Springs Reservation in Oregon; and Menominee Reservation in Wisconsin. (Public Law 280, 2010, p.588) While it extends to only five states, this law, as mentioned earlier, significantly contributes towards the jurisdictional patchwork that complicates the pursuit of justice in MMIP cases.",
+        "As a result of the Indian Civil Rights Act of 1968, tribal courts usually can not sentence a defendant to more than a 1-year prison term or a $5000 fine, or both, for each respective charge. (Indian Civil Rights Act, 2022, p.3) This is a significant roadblock in delivering justice, especially for heinous crimes like homicide and rape.",
+        "However, tribal courts can impose greater penalties for defendants who had previously been convicted of a similar offense elsewhere in the United States or was currently being prosecuted for an offense that might entail imprisonment of more than 1 year; however, even so, sentences could not exceed 3 years or a $5000 fine, or both, for an offense. (Indian Civil Rights Act, 2022, p.3) Yet, these sentences are drastically disproportionate compared to how many crimes to similar degrees would be prosecuted in the rest of the United States.",
+        "Regardless of the number of offenses a defendant was being charged with, however, their cumulative sentences may not exceed a term for more than 9 years. (Indian Civil Rights Act, 2022, p.3) Not only does this limit tribal prosecutorial power, but it also makes it so that even if, after a difficult process, tribal courts do gain the jurisdiction to prosecute a defendant, the integrity of public safety and security becomes at risk. The cost is no longer just about jurisdiction. It is about community welfare."
+      ],
+      "Jurisdictional Checkerboard": [
+        "Usually, local communities address local criminal justice issues through locally-controlled institutions while the Federal government merely enforces federal laws for criminal justice procedures. However, on tribal lands, the Federal and State governments operate the \"vast majority\" of criminal justice systems over local Tribal governments. (Indian Law & Order Commission, 2015, p.1) This posits the risk of confusion and complications between law enforcement.",
+        "This way, the jurisdiction, which changes based on whether the victim and suspect are Indigenous or not, risks human lives, wastes resources, and prolongs government inefficiency in \"the crucial first hours of an investigation\". (Indian Law & Order Commission, 2015, p.9) In a serious crime like murder and sexual violence were time is critical, these jurisdictional hurdles only inhibit the pursuit of justice.",
+        "Additionally, the jurisdictional patchwork subjects individuals living in some of the most impoverished and isolated communities in the country to confront highly complicated legal rules and procedures. (Testimony of Troy A. Eid, 2009, p.40) This compounding of challenges continues the cycle of injustice - socioeconomic and legal - faced by Indigenous communities."
+      ],
+      "So What?": [
+        "The cost of the checkerboard is stark. In one case, the United States Attorney's Office ended up prosecuting the non-Indian driver for the death of the grandmother, while the Southern Ute Tribe had no criminal jurisdiction in a matter involving the death of its own tribal member inflicted by a non-Indigenous defendant. (Testimony of Troy A. Eid, 2009, p.41) The lack of representation only makes it more difficult for the impacted communities to seek the justice that they deserve.",
+        "The checkerboard has allowed perpetrators to avoid responsibility: in one case reported by Amnesty International where two American Indian women were kidnapped, blindfolded, and raped by non-Indian men, the victims were unable to say whether their assaults occurred on federal, state, or tribal land---propogating concerns among prosecutors that they \"might be unable to obtain justice.\" (Condes, 2021, p.536) The case shows that addressing the jurisdictional patchwork is not just about clarifying who has the authority to prosecute crimes. It is about protecting community welfare.",
+        "According to the Indian Law & Order Commission, the Indian Civil Rights Act \"[erodes] Tribal community members' and outsiders' confidence in Tribal governments' ability to maintain law and order in Indian country\" by giving a Native nation \"little choice.\" If a tribal government wants a \"more appropriate\" sentence, it must \"cede prosecution\" to a Federal or State government; or, if the \"too-short\" Tribal sentence is the only option, public safety and victims' rights become affected. (Indian Law & Order Commission, 2015, p.21) This ultimately limits a tribe's representation in a case involving one of their own people."
+      ],
+      "Now What?": ["TBD"],
+      "Bibliography": ["TBD"]
+    };
+    const regionCenters = {"Permian Basin regional network (multiple lodges)":[-103.15,31.55],"Bakken Basin regional network (multiple lodges)":[-103.55,47.80],"Eagle Ford Shale":[-98.05,28.35],"Marcellus / Utica Shale":[-80.20,40.70],"Powder River Basin":[-105.40,44.30],"Anadarko Basin / SCOOP-STACK":[-98.10,35.00],"North Slope":[-148.50,70.20]};
+    const basinRadiiKm = {"San Juan Basin gas field (general area)":100,"Permian Basin (general area)":190,"Mesabi Iron Range (general area)":110,"Carlin Trend (general area)":95,"Prudhoe Bay Oil Field":80,"Eagle Ford Shale (general area)":150,"Marcellus Shale (general area)":200};
+    const main = document.querySelector("main"), svg = d3.select("#map"), content = svg.select("#map-content"), statesLayer = svg.select("#states"), caseZonesLayer = svg.select("#case-zones"), communityZonesLayer = svg.select("#community-zones"), communitiesLayer = svg.select("#communities"), basinsLayer = svg.select("#basins"), extractionZonesLayer = svg.select("#extraction-zones"), extractionLayer = svg.select("#extraction-sites"), campZonesLayer = svg.select("#camp-zones"), campsLayer = svg.select("#camps"), regionsLayer = svg.select("#regions"), clustersLayer = svg.select("#clusters"), casesLayer = svg.select("#cases"), scaleBar = svg.select("#scale-bar");
+    const panel = document.getElementById("case-panel"), details = document.getElementById("case-details"), status = document.getElementById("status");
+    const states = feature(us, us.objects.states), borders = mesh(us, us.objects.states, (a,b) => a !== b);
+    let projection, path, records = [], facilities = [], regions = [], extractionSites = [], extractionBasins = [], communities = [], transform = d3.zoomIdentity;
+    const clean = value => value && String(value).trim() ? String(value).replaceAll("_", " ") : "unknown";
+    const escape = value => clean(value).replace(/[&<>\"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[char]);
+    function showPanel(title, summary, detailFields, d) {
+      const source = d.source_url && /^https?:/.test(d.source_url) ? `<dt>Source</dt><dd><a href="${escape(d.source_url)}" target="_blank" rel="noopener">${escape(d.source_name || "Source link")}</a></dd>` : "";
+      details.innerHTML = `<h2>${escape(title)}</h2><p>${summary}</p><dl>${detailFields.map(([label,key]) => `<dt>${label}</dt><dd>${escape(d[key])}</dd>`).join("")}${source}</dl>`;
+      panel.hidden = false;
+    }
+    function showCase(d) { showPanel(d.case_name_or_id, `${escape(d.location_description)} · ${escape(d.state)}<br>${escape(d.date_reported_or_incident)}`, fields, d); }
+    function showCamp(d, isRegion = false) {
+      const campFields = isRegion ? [["States", "states"],["Extraction driver", "extraction_driver"],["Known from", "known_from"],["Notes", "notes"]] : [["Facility name", "facility_name"],["Operator", "operator"],["Nearest town", "nearest_city_or_town"],["Coordinate precision", "coordinate_precision"],["Number of workers", "number_of_workers"],["Within 20 miles of Indigenous land", "within_20_miles_of_indigenous_land"],["Documented violence incidents involving Indigenous persons", "documented_violence_incidents_involving_indigenous_persons"],["Notes", "notes"]];
+      showPanel(isRegion ? d.region_name : d.facility_name, isRegion ? "Documented man-camp region; no named facility coordinates found." : `Named facility · ${escape(d.state)}`, campFields, d);
+    }
+    function showExtraction(d, isBasin = false) {
+      const extractionFields = [[isBasin ? "Basin name" : "Site name", "site_name"],["Category", "category"],["Operator", "operator"],["Number of workers", "number_of_workers"],["Notes", "notes"]];
+      showPanel(d.site_name, isBasin ? "Basin-wide extraction zone. The outline is an approximate display area, not an authoritative basin boundary." : `Named major site · ${escape(d.nearest_town)} · ${escape(d.state)}`, extractionFields, d);
+    }
+    function showCommunity(d) {
+      const communityFields = [["Tribal affiliation", "tribal_affiliation"],["Land type", "land_type"],["Documented violence incidents involving Indigenous persons", "documented_violence_incidents_involving_indigenous_persons"],["Boundary note", "polygon_source_note"],["Notes", "notes"]];
+      showPanel(d.name_of_community_or_reservation, `${escape(d.state)} · Census TIGER/Line AIANNH boundary`, communityFields, d);
+    }
+    document.getElementById("close-panel").addEventListener("click", () => panel.hidden = true);
+    function enableCollapse(sectionId, buttonId) {
+      const section = document.getElementById(sectionId), button = document.getElementById(buttonId);
+      button.addEventListener("click", () => {
+        const collapsed = section.classList.toggle("is-collapsed");
+        button.setAttribute("aria-expanded", String(!collapsed));
+        button.textContent = collapsed ? "+" : "−";
+        const label = sectionId === "map-legend" ? "map instructions" : sectionId === "map-header-box" ? "map information" : "map layers";
+        button.setAttribute("aria-label", `${collapsed ? "Expand" : "Minimize"} ${label}`);
+      });
+    }
+    enableCollapse("map-legend", "toggle-legend");
+    enableCollapse("map-layer-controls", "toggle-layer-controls");
+    enableCollapse("map-header-box", "toggle-map-header");
+    document.getElementById("toggle-story-panel").addEventListener("click", event => {
+      const minimized = document.getElementById("story-panel").classList.toggle("is-minimized");
+      document.body.classList.toggle("guide-collapsed", minimized);
+      event.currentTarget.setAttribute("aria-expanded", String(!minimized));
+      event.currentTarget.textContent = minimized ? "Open guide" : "Minimize";
+      setTimeout(drawBase, 240);
+    });
+    const researchView = document.getElementById("research-view"), researchTitle = document.getElementById("research-title"), researchText = document.getElementById("research-text");
+    document.querySelectorAll("[data-research-section]").forEach(button => button.addEventListener("click", () => {
+      const section = button.dataset.researchSection;
+      document.querySelectorAll(".story-heading, .story-subheading").forEach(item => item.classList.toggle("is-active", item === button));
+      researchTitle.textContent = section;
+      researchText.innerHTML = researchSections[section].map(paragraph => `<p>${escape(paragraph)}</p>`).join("");
+      researchView.hidden = false;
+      researchView.classList.add("is-visible");
+      document.getElementById("minimize-research").focus();
+    }));
+    document.getElementById("minimize-research").addEventListener("click", () => {
+      researchView.classList.remove("is-visible");
+      researchView.hidden = true;
+    });
+    const timelineExplorer = document.getElementById("timeline-explorer"), timelineRange = document.getElementById("timeline-range"), timelineSelect = document.getElementById("timeline-select");
+    let timelineEvents = [], timelineSources = new Map(), timelineLoaded = false;
+    const timelineValue = id => document.getElementById(id);
+    function renderTimelineEvent(index) {
+      const event = timelineEvents[index]; if (!event) return;
+      const previous = timelineEvents[index - 1], citation = event["formal citation / status"] || "Citation not listed";
+      timelineRange.value = index; timelineSelect.value = index;
+      timelineValue("timeline-year").textContent = event.year;
+      timelineValue("timeline-law").textContent = event.measure;
+      timelineValue("timeline-era").textContent = `${event.year} | ${event.era} | ${citation}`;
+      timelineValue("timeline-explanation").textContent = event["primary jurisdiction or land effect"];
+      timelineValue("timeline-tribal").textContent = event["tribal criminal jurisdiction implication"];
+      timelineValue("timeline-federal").textContent = event["federal criminal jurisdiction implication"];
+      timelineValue("timeline-state").textContent = event["state criminal jurisdiction implication"];
+      timelineValue("timeline-land").textContent = event["treaty-boundary / land implication"];
+      timelineValue("timeline-land-symbol").classList.toggle("fragmented-land", /allot|fragment|surplus|fee-patent/i.test(`${event.era} ${event["treaty-boundary / land implication"]}`));
+      timelineValue("timeline-where").textContent = `Applied in: ${event["where it applied"]} PL-280: ${event["PL-280 status"]}`;
+      timelineValue("timeline-change").textContent = previous ? `Previous event: ${previous.year}, ${previous.measure}. Its primary effect was: ${previous["primary jurisdiction or land effect"]} This event changes the framework by: ${event["primary jurisdiction or land effect"]}` : "This is the first selected event in the workbook timeline.";
+      const source = timelineSources.get(event.source_id), link = timelineValue("timeline-source");
+      link.textContent = source ? `Source: ${source.source} (${source.publisher})` : `Source ID: ${event.source_id || "not listed"}`;
+      if (source && source.url) { link.href = source.url; link.style.pointerEvents = null; } else { link.removeAttribute("href"); link.style.pointerEvents = "none"; }
+    }
+    async function loadTimelineExplorer() {
+      if (timelineLoaded) return;
+      try {
+        const response = await fetch("Indigenous_Jurisdiction_and_Land_Laws_by_Era.xlsx");
+        if (!response.ok) throw new Error("Workbook request failed");
+        const workbook = XLSX.read(await response.arrayBuffer(), {type:"array"});
+        timelineEvents = XLSX.utils.sheet_to_json(workbook.Sheets["Top 5 Laws by Era"], {defval:""}).sort((a,b) => +a.year - +b.year);
+        timelineSources = new Map(XLSX.utils.sheet_to_json(workbook.Sheets["Sources"], {defval:""}).map(source => [source.source_id, source]));
+        if (!timelineEvents.length) throw new Error("No timeline records found");
+        timelineRange.max = timelineEvents.length - 1;
+        timelineSelect.innerHTML = timelineEvents.map((event, index) => `<option value="${index}">${escape(event.year)} - ${escape(event.measure)}</option>`).join("");
+        timelineLoaded = true;
+        renderTimelineEvent(0);
+      } catch (error) {
+        timelineSelect.innerHTML = "<option>Timeline data could not load</option>";
+        timelineValue("timeline-explanation").textContent = "Open this map through a local web server so it can load the attached jurisdiction workbook.";
+        console.error(error);
+      }
+    }
+    timelineRange.addEventListener("input", () => renderTimelineEvent(+timelineRange.value));
+    timelineSelect.addEventListener("change", () => renderTimelineEvent(+timelineSelect.value));
+    document.getElementById("open-timeline-explorer").addEventListener("click", async () => {
+      researchView.classList.remove("is-visible"); researchView.hidden = true;
+      document.querySelectorAll(".story-heading, .story-subheading").forEach(item => item.classList.toggle("is-active", item.id === "open-timeline-explorer"));
+      timelineExplorer.hidden = false; timelineExplorer.classList.add("is-visible");
+      await loadTimelineExplorer();
+      document.getElementById("minimize-timeline").focus();
+    });
+    document.getElementById("minimize-timeline").addEventListener("click", () => {
+      timelineExplorer.classList.remove("is-visible"); timelineExplorer.hidden = true;
+    });
+    const setLayerVisible = (layers, visible) => layers.forEach(layer => layer.style("display", visible ? null : "none"));
+    document.getElementById("toggle-cases").addEventListener("change", event => setLayerVisible([casesLayer, clustersLayer], event.target.checked));
+    document.getElementById("toggle-case-zones").addEventListener("change", event => setLayerVisible([caseZonesLayer], event.target.checked));
+    document.getElementById("toggle-camps").addEventListener("change", event => setLayerVisible([campsLayer], event.target.checked));
+    document.getElementById("toggle-camp-zones").addEventListener("change", event => setLayerVisible([campZonesLayer], event.target.checked));
+    document.getElementById("toggle-camp-regions").addEventListener("change", event => setLayerVisible([regionsLayer], event.target.checked));
+    document.getElementById("toggle-sites").addEventListener("change", event => setLayerVisible([extractionLayer], event.target.checked));
+    document.getElementById("toggle-extraction-zones").addEventListener("change", event => setLayerVisible([extractionZonesLayer], event.target.checked));
+    document.getElementById("toggle-basins").addEventListener("change", event => basinsLayer.style("display", event.target.checked ? null : "none"));
+    document.getElementById("toggle-communities").addEventListener("change", event => setLayerVisible([communitiesLayer], event.target.checked));
+    document.getElementById("toggle-community-zones").addEventListener("change", event => setLayerVisible([communityZonesLayer], event.target.checked));
+    function positioned() { return records.map(d => ({...d, xy: projection(d.coordinates)})).filter(d => d.xy); }
+    function declutter(points) {
+      const used = []; const separation = 12 / transform.k;
+      return points.map(d => {
+        let [x,y] = d.xy, attempt = 0;
+        while (used.some(p => Math.hypot(p.x - x, p.y - y) < separation) && attempt++ < 30) { const a = attempt * 2.4; x = d.xy[0] + Math.cos(a) * attempt * 2.2; y = d.xy[1] + Math.sin(a) * attempt * 2.2; }
+        used.push({x,y}); return {...d, display:[x,y]};
+      });
+    }
+    function renderCases() {
+      const points = positioned(); const lowZoom = transform.k < 2.4;
+      if (lowZoom) {
+        const cell = 42 / transform.k, grouped = d3.group(points, d => `${Math.floor(d.xy[0] / cell)},${Math.floor(d.xy[1] / cell)}`);
+        const clusters = [...grouped.values()].map(group => ({items:group, xy:d3.mean(group, d => d.xy[0]) !== undefined ? [d3.mean(group,d => d.xy[0]), d3.mean(group,d => d.xy[1])] : group[0].xy}));
+        casesLayer.selectAll("circle.case").remove();
+        clustersLayer.selectAll("g.cluster-wrap").data(clusters).join("g").attr("class","cluster-wrap").attr("transform", d => `translate(${d.xy})`).each(function(d) {
+          const group = d3.select(this), radius = Math.max(5, Math.min(17, 4 + Math.sqrt(d.items.length) * 3)) / transform.k;
+          group.attr("opacity", 1);
+          group.selectAll("circle").data([d]).join("circle").attr("class", d.items.length === 1 ? "case" : "cluster").attr("r", radius).attr("tabindex",0).on("click", (event, c) => c.items.length === 1 ? showCase(c.items[0]) : zoomTo(c.xy)).on("keydown", (event,c) => { if(event.key === "Enter") c.items.length === 1 ? showCase(c.items[0]) : zoomTo(c.xy); });
+          group.selectAll("text").data(d.items.length > 1 ? [d] : []).join("text").attr("class","cluster-label").attr("font-size", `${10 / transform.k}px`).text(c => c.items.length);
+        });
+      } else {
+        clustersLayer.selectAll("*").remove(); const visible = declutter(points);
+        casesLayer.selectAll("circle.case").data(visible, d => d.case_name_or_id).join("circle").attr("class","case").attr("cx",d => d.display[0]).attr("cy",d => d.display[1]).attr("r", 4.8 / transform.k).attr("tabindex",0).on("click", (event,d) => showCase(d)).on("keydown", (event,d) => { if(event.key === "Enter") showCase(d); }).append("title").text(d => `${d.case_name_or_id}: ${d.location_description}`);
+      }
+    }
+    function renderCamps() {
+      const sites = facilities.map(d => ({...d, xy:projection([+d.longitude,+d.latitude])})).filter(d => d.xy);
+      campsLayer.selectAll("rect.camp").data(sites, d => d.facility_name).join("rect").attr("class","camp").attr("x",d => d.xy[0] - 5.5 / transform.k).attr("y",d => d.xy[1] - 5.5 / transform.k).attr("width",11 / transform.k).attr("height",11 / transform.k).attr("tabindex",0).on("click",(event,d) => showCamp(d)).on("keydown",(event,d) => { if(event.key === "Enter") showCamp(d); }).append("title").text(d => `${d.facility_name} (${d.nearest_city_or_town})`);
+      const area = 115 / (transform.k * transform.k), symbol = d3.symbol().type(d3.symbolDiamond).size(area);
+      const mappedRegions = regions.map(d => ({...d, xy:projection(regionCenters[d.region_name])})).filter(d => d.xy);
+      regionsLayer.selectAll("path.camp-region").data(mappedRegions, d => d.region_name).join("path").attr("class","camp-region").attr("d",symbol).attr("transform",d => `translate(${d.xy})`).attr("tabindex",0).on("click",(event,d) => showCamp(d,true)).on("keydown",(event,d) => { if(event.key === "Enter") showCamp(d,true); }).append("title").text(d => `${d.region_name}: documented region without named facility coordinates`);
+    }
+    function renderExtraction() {
+      const points = extractionSites.map(d => ({...d,xy:projection([+d.longitude,+d.latitude])})).filter(d => d.xy);
+      const triangle = d3.symbol().type(d3.symbolTriangle).size(105 / (transform.k * transform.k));
+      extractionLayer.selectAll("path.extraction").data(points,d => d.site_name).join("path").attr("class","extraction").attr("d",triangle).attr("transform",d => `translate(${d.xy})`).attr("tabindex",0).on("click",(event,d) => showExtraction(d)).on("keydown",(event,d) => {if(event.key === "Enter") showExtraction(d);}).append("title").text(d => `${d.site_name} (${d.category})`);
+      basinsLayer.selectAll("path.basin").data(extractionBasins,d => d.site_name).join("path").attr("class","basin").attr("d",d => path(d.geometry)).attr("tabindex",0).on("click",(event,d) => showExtraction(d,true)).on("keydown",(event,d) => {if(event.key === "Enter") showExtraction(d,true);}).append("title").text(d => `${d.site_name}: approximate basin-wide zone`);
+    }
+    function renderCommunities() {
+      const radiusDegrees = 10 / 69.0934;
+      const areas = communities.map(d => ({...d, displayGeometry:d3.geoCircle().center([+d.centroid_longitude,+d.centroid_latitude]).radius(radiusDegrees)()}));
+      communitiesLayer.selectAll("path.community").data(areas, d => d.name_of_community_or_reservation).join("path").attr("class","community").attr("d", d => path(d.displayGeometry)).attr("tabindex",0).on("click",(event,d) => showCommunity(d)).on("keydown",(event,d) => {if(event.key === "Enter") showCommunity(d);}).append("title").text(d => d.name_of_community_or_reservation);
+    }
+    function connectedProximityGroups(items, coordinate, marginMiles, proximityMiles = 30) {
+      const located = items.map((item, index) => ({item, index, coordinates:coordinate(item)})).filter(d => Array.isArray(d.coordinates) && d.coordinates.every(Number.isFinite));
+      const parent = located.map((_, index) => index);
+      const root = index => parent[index] === index ? index : (parent[index] = root(parent[index]));
+      const join = (a, b) => { a = root(a); b = root(b); if (a !== b) parent[b] = a; };
+      for (let i = 0; i < located.length; i++) for (let j = i + 1; j < located.length; j++) if (d3.geoDistance(located[i].coordinates, located[j].coordinates) * 3958.7613 <= proximityMiles) join(i, j);
+      const groups = d3.groups(located, (_, index) => root(index)).map(([, group]) => group).filter(group => group.length >= 2);
+      return groups.map(group => {
+        const center = [d3.mean(group, d => d.coordinates[0]), d3.mean(group, d => d.coordinates[1])];
+        const radiusMiles = d3.max(group, d => d3.geoDistance(center, d.coordinates) * 3958.7613) + marginMiles;
+        return {count:group.length, geometry:d3.geoCircle().center(center).radius(radiusMiles / 69.0934)()};
+      });
+    }
+    function renderProximityZones() {
+      const caseZones = connectedProximityGroups(records, d => d.coordinates, 3, 50);
+      const communityZones = connectedProximityGroups(communities, d => [+d.centroid_longitude, +d.centroid_latitude], 10);
+      const campZones = connectedProximityGroups(facilities, d => [+d.longitude, +d.latitude], 2);
+      const extractionZones = connectedProximityGroups(extractionSites, d => [+d.longitude, +d.latitude], 2);
+      caseZonesLayer.selectAll("path.case-zone").data(caseZones).join("path").attr("class","proximity-zone case-zone").attr("d", d => path(d.geometry));
+      communityZonesLayer.selectAll("path.community-zone").data(communityZones).join("path").attr("class","proximity-zone community-zone").attr("d", d => path(d.geometry));
+      campZonesLayer.selectAll("path.camp-zone").data(campZones).join("path").attr("class","proximity-zone camp-zone").attr("d", d => path(d.geometry));
+      extractionZonesLayer.selectAll("path.extraction-zone").data(extractionZones).join("path").attr("class","proximity-zone extraction-zone").attr("d", d => path(d.geometry));
+    }
+    function renderScaleBar(width, height) {
+      const origin = [-98, 38], end = [-98 + 100 / (69.0934 * Math.cos(38 * Math.PI / 180)), 38];
+      const from = projection(origin), to = projection(end); if (!from || !to) return;
+      const pixelsPer100Miles = Math.hypot(to[0] - from[0], to[1] - from[1]) * transform.k;
+      const pixelsPer500Miles = pixelsPer100Miles * 5;
+      const x = Math.max(18, (width - pixelsPer500Miles) / 2), y = Math.max(38, height - 34), ticks = [0, 10, 50, 100, 200, 300, 400, 500];
+      scaleBar.attr("transform", `translate(${x},${y})`);
+      scaleBar.selectAll("*").remove();
+      const segments = [[0,10,"#16303b"],[10,50,"#f7fbff"],[50,100,"#16303b"],[100,200,"#f7fbff"],[200,300,"#16303b"],[300,400,"#f7fbff"],[400,500,"#16303b"]];
+      scaleBar.selectAll("rect.segment").data(segments).join("rect").attr("class","segment").attr("x",d => pixelsPer500Miles * d[0] / 500).attr("y",-8).attr("width",d => pixelsPer500Miles * (d[1] - d[0]) / 500).attr("height",8).attr("fill",d => d[2]);
+      scaleBar.append("line").attr("x1",0).attr("x2",pixelsPer500Miles).attr("y1",0).attr("y2",0);
+      scaleBar.selectAll("line.tick").data(ticks).join("line").attr("class","tick").attr("x1",d => pixelsPer500Miles * d / 500).attr("x2",d => pixelsPer500Miles * d / 500).attr("y1",-10).attr("y2",5);
+      scaleBar.selectAll("text.label").data(ticks.slice(1)).join("text").attr("class","label").attr("x",d => pixelsPer500Miles * d / 500).attr("y",19).attr("text-anchor","middle").text(d => `${d} mi`);
+      scaleBar.append("text").attr("x",0).attr("y",-15).text("Distance scale");
+    }
+    function mapSize() { const bounds = svg.node().getBoundingClientRect(); return {width:bounds.width, height:bounds.height}; }
+    function zoomTo(point) { const {width,height} = mapSize(); svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity.translate(width/2, height/2).scale(Math.min(5, transform.k * 2.5)).translate(-point[0], -point[1])); }
+    const zoom = d3.zoom().scaleExtent([1,12]).on("zoom", event => { const {width,height} = mapSize(); transform = event.transform; content.attr("transform", transform); renderCases(); renderCamps(); renderExtraction(); renderCommunities(); renderScaleBar(width, height); });
+    svg.call(zoom).on("dblclick.zoom", null); document.getElementById("reset").addEventListener("click", () => svg.transition().duration(450).call(zoom.transform, d3.zoomIdentity));
+    function drawBase() {
+      const {width, height} = mapSize(); svg.attr("viewBox", `0 0 ${width} ${height}`);
+      projection = d3.geoAlbersUsa().fitExtent([[18,76],[width-18,height-18]], states); path = d3.geoPath(projection);
+      statesLayer.selectAll("path.state").data(states.features, d => d.id).join("path").attr("class","state").attr("d",path);
+      statesLayer.selectAll("path.border").data([borders]).join("path").attr("class","border").attr("d",path); renderCases(); renderCamps(); renderExtraction(); renderCommunities(); renderProximityZones(); renderScaleBar(width, height);
+    }
+    async function loadCases() {
+      try {
+        const [caseResponse, additionalResponse, round2Response, campResponse, additionalCampResponse, extractionResponse, additionalExtractionResponse, communityResponse, additionalCommunityResponse] = await Promise.all([fetch("MMIP%20Data/MMIP_Case_Data.xlsx"),fetch("MMIP%20Data/MMIP_Additional_Cases.xlsx"),fetch("MMIP%20Data/MMIP_Additional_Cases_Round_2.xlsx"),fetch("MMIP%20Data/Man_Camp_Data.xlsx"),fetch("MMIP%20Data/Man_Camp_Additional_Data.xlsx"),fetch("MMIP%20Data/Resource_Extraction_Site_Data.xlsx"),fetch("MMIP%20Data/Resource_Extraction_Additional_Data.xlsx"),fetch("MMIP%20Data/Indigenous_Land_Community_Data.xlsx"),fetch("MMIP%20Data/Indigenous_Land_Community_Additional_Data.xlsx")]);
+        if (!caseResponse.ok || !additionalResponse.ok || !round2Response.ok || !campResponse.ok || !additionalCampResponse.ok || !extractionResponse.ok || !additionalExtractionResponse.ok || !communityResponse.ok || !additionalCommunityResponse.ok) throw new Error("One or more workbook requests failed");
+        const workbook = XLSX.read(await caseResponse.arrayBuffer(), {type:"array"});
+        const additionalWorkbook = XLSX.read(await additionalResponse.arrayBuffer(), {type:"array"});
+        const round2Workbook = XLSX.read(await round2Response.arrayBuffer(), {type:"array"});
+        const campWorkbook = XLSX.read(await campResponse.arrayBuffer(), {type:"array"});
+        const additionalCampWorkbook = XLSX.read(await additionalCampResponse.arrayBuffer(), {type:"array"});
+        const extractionWorkbook = XLSX.read(await extractionResponse.arrayBuffer(), {type:"array"});
+        const additionalExtractionWorkbook = XLSX.read(await additionalExtractionResponse.arrayBuffer(), {type:"array"});
+        const communityWorkbook = XLSX.read(await communityResponse.arrayBuffer(), {type:"array"});
+        const additionalCommunityWorkbook = XLSX.read(await additionalCommunityResponse.arrayBuffer(), {type:"array"});
+        const raw = XLSX.utils.sheet_to_json(workbook.Sheets["Documented Individual Cases"], {defval:""});
+        const additionalRaw = XLSX.utils.sheet_to_json(additionalWorkbook.Sheets["Additional MMIP Cases"], {defval:""});
+        const round2Raw = XLSX.utils.sheet_to_json(round2Workbook.Sheets["Additional MMIP Cases 2"], {defval:""});
+        const campRaw = XLSX.utils.sheet_to_json(campWorkbook.Sheets["Documented Facilities"], {defval:""});
+        const additionalCampRaw = XLSX.utils.sheet_to_json(additionalCampWorkbook.Sheets["Additional Man Camps"], {defval:""});
+        const regionRaw = XLSX.utils.sheet_to_json(campWorkbook.Sheets["Regions - No Facility Data Found"], {defval:""});
+        const extractionRaw = XLSX.utils.sheet_to_json(extractionWorkbook.Sheets["Named Major Sites"], {defval:""});
+        const additionalExtractionRaw = XLSX.utils.sheet_to_json(additionalExtractionWorkbook.Sheets["Additional Extraction Sites"], {defval:""});
+        const communityRaw = XLSX.utils.sheet_to_json(communityWorkbook.Sheets["Named Communities"], {defval:""});
+        const additionalCommunityRaw = XLSX.utils.sheet_to_json(additionalCommunityWorkbook.Sheets["Additional Federal Lands"], {defval:""});
+        const unmapped = raw.filter(d => !places[d.case_name_or_id]);
+        const additionalCases = additionalRaw.map(d => {
+          const source_url = String(d.source_urls || "").split(";")[0].trim();
+          const slug = source_url.split("/").filter(Boolean).pop() || "BIA profile";
+          const case_name_or_id = slug.replace(/-/g," ").replace(/\b\w/g, letter => letter.toUpperCase());
+          const location_description = d.latitude || "location_not_publicly_documented";
+          const stateMatch = String(location_description).match(/,\s*([A-Z]{2})(?:\s|$|—)/);
+          return {...d,case_name_or_id,location_description,state:stateMatch ? stateMatch[1] : "unknown",date_reported_or_incident:"not_publicly_documented",jurisdiction_status:"not_publicly_documented",contested_reason:"not_publicly_documented",source_name:"BIA Office of Justice Services Missing and Murdered Unit",source_url,notes:"BIA profile; mapped at the workbook's town/reservation-level location proxy.",coordinates:additionalLocationCenters[location_description]};
+        });
+        const unmappedAdditional = additionalCases.filter(d => !d.coordinates);
+        const round2Cases = round2Raw.map(d => {
+          const source_url = String(d.source_urls || "").split(";")[0].trim();
+          const slug = source_url.split("/").filter(Boolean).pop() || "source-profile";
+          const location_description = d.latitude || "location_not_publicly_documented";
+          const name = round2Names[slug] || (source_url.includes("pepita-redhair") ? "Pepita Redhair" : `MMIP case — ${location_description}`);
+          const stateMatch = String(location_description).match(/,\s*([A-Z]{2})(?:\s|$|—)/);
+          return {...d,case_name_or_id:name,location_description,state:stateMatch ? stateMatch[1] : "unknown",date_reported_or_incident:"not_publicly_documented",jurisdiction_status:"not_publicly_documented",contested_reason:"not_publicly_documented",source_name:"FBI Voices Not Forgotten / cited source profile",source_url,notes:"Round 2 sourced profile; mapped at the workbook's town, reservation, road-area, or relative-location proxy.",coordinates:round2LocationCenters[location_description]};
+        });
+        const unmappedRound2 = round2Cases.filter(d => !d.coordinates);
+        records = [...raw.filter(d => places[d.case_name_or_id]).map(d => ({...d, coordinates:places[d.case_name_or_id]})),...additionalCases.filter(d => d.coordinates),...round2Cases.filter(d => d.coordinates)];
+        const additionalFacilities = additionalCampRaw.map(d => ({...d,facility_name:d.camp_name,source_name:"Additional U.S. Man Camp Dataset",source_url:String(d.source_urls || "").split(";")[0].trim(),notes:d.evidence_notes || "unknown"}));
+        facilities = [...campRaw.filter(d => d.latitude !== "" && d.longitude !== ""),...additionalFacilities.filter(d => d.latitude !== "" && d.longitude !== "")];
+        regions = [...campRaw.filter(d => !d.latitude && regionCenters[d.facility_name]).map(d => ({...d,region_name:d.facility_name,states:d.state,extraction_driver:"unknown",known_from:d.source_name})),...regionRaw.filter(d => regionCenters[d.region_name])];
+        const additionalExtractionSites = additionalExtractionRaw.map(d => ({...d,source_name:"Additional U.S. Resource Extraction Sites",source_url:String(d.source_urls || "").split(";")[0].trim(),notes:d.evidence_notes || "unknown"}));
+        extractionSites = [...extractionRaw.filter(d => !basinRadiiKm[d.site_name]),...additionalExtractionSites.filter(d => d.latitude !== "" && d.longitude !== "")];
+        extractionBasins = extractionRaw.filter(d => basinRadiiKm[d.site_name]).map(d => ({...d,geometry:d3.geoCircle().center([+d.longitude,+d.latitude]).radius(basinRadiiKm[d.site_name] / 111.32)()}));
+        const polygonGeometry = value => { const coordinates = JSON.parse(value); const swap = node => typeof node[0] === "number" ? [node[1],node[0]] : node.map(swap); const converted = swap(coordinates); return {type:Array.isArray(converted[0][0][0]) ? "MultiPolygon" : "Polygon",coordinates:converted}; };
+        communities = [...communityRaw,...additionalCommunityRaw].filter(d => d.polygon_coordinates).map(d => ({...d,tribal_affiliation:"unknown - no separate affiliation field in workbook",geometry:polygonGeometry(d.polygon_coordinates)}));
+        status.textContent = `${records.length} MMIP cases, including ${additionalCases.length - unmappedAdditional.length} additional BIA profiles and ${round2Cases.length - unmappedRound2.length} round-two profiles, ${facilities.length} named man-camp facilities including ${additionalFacilities.length} additional camps, ${regions.length} man-camp regions, ${extractionSites.length} named extraction sites including ${additionalExtractionSites.length} additional sites, ${extractionBasins.length} basin-wide zones, and ${communities.length} Indigenous community/reservation centroids mapped. ${unmapped.length + unmappedAdditional.length + unmappedRound2.length} case records omitted because their description has no mappable locality.`;
+        drawBase();
+        return;
+        status.textContent = `${records.length} MMIP cases, ${facilities.length} named man-camp facilities, ${regions.length} man-camp regions, ${extractionSites.length} named extraction sites, and ${extractionBasins.length} basin-wide zones mapped. Loading community boundaries…`;
+        drawBase();
+        loadCommunityGeometry(communityRaw, unmapped.length);
+      } catch (error) { status.textContent = "Case data could not load. Open this file through a local web server, not directly from the file system."; console.error(error); }
+    }
+    async function loadCommunityGeometry(communityRaw, unmappedCount) {
+      try {
+        const tiger = await shp("https://www2.census.gov/geo/tiger/TIGER2024/AIANNH/tl_2024_us_aiannh.zip");
+        const features = tiger.features || [];
+        const used = new Set();
+        communities = communityRaw.map(d => {
+          const centroid = [+d.centroid_longitude,+d.centroid_latitude];
+          const boundary = features.find(f => !used.has(f.properties.GEOID) && d3.geoContains(f, centroid));
+          if (!boundary) return null;
+          used.add(boundary.properties.GEOID);
+          return {...d, tribal_affiliation:"unknown — no separate affiliation field in workbook", geometry:boundary.geometry};
+        }).filter(Boolean);
+        renderCommunities();
+        status.textContent = `${records.length} MMIP cases, ${facilities.length} named man-camp facilities, ${regions.length} man-camp regions, ${extractionSites.length} named extraction sites, ${extractionBasins.length} basin-wide zones, and ${communities.length} verified Census community boundaries mapped. ${unmappedCount} case records omitted because their description has no mappable locality.`;
+      } catch (error) { status.textContent += " Community boundaries could not load; the other layers remain available."; console.error(error); }
+    }
+    addEventListener("resize", drawBase); drawBase(); loadCases();
+  </script>
+</body>
+</html>

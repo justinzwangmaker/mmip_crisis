@@ -1,0 +1,10 @@
+{
+  "type": "FeatureCollection",
+  "features": [],
+  "source": {
+    "name": "USDA Forest Service Tribal Lands Ceded to the United States",
+    "geojsonEndpoint": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_TribalCessionLands_01/MapServer/0/query?where=1%3D1&outFields=*&returnGeometry=true&outSR=4326&f=pjson",
+    "dateFields": ["cessdate1", "cessdate2", "cessdate3", "cessdate4", "cessdate5"],
+    "note": "Historical cession polygons are loaded from the published USDA layer. They are not present Indian country or a legal jurisdiction determination."
+  }
+}
