@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         index: resolve(__dirname, "index.html"),
         map: resolve(__dirname, "continental-us-map.html"),
+        mapExplorer: resolve(__dirname, "map-explorer.html"),
         jurisdictionHistory: resolve(__dirname, "jurisdiction-history-sample.html"),
       },
     },
