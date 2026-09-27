@@ -59,10 +59,12 @@
     .research-view { background:#f3c7ac; }.research-article, .timeline-card { border-color:#252525; border-radius:0; background:#fffaf5; box-shadow:4px 4px 0 rgba(37,37,37,.28); }
     .research-article h1, .timeline-card h1, .timeline-event h2 { font-family:Georgia, "Times New Roman", serif; color:#252525; font-weight:400; }.research-article p, .timeline-event p, .timeline-card > p { color:#443933; }
     .timeline-controls select { border-radius:0; border-color:#252525; background:#fffaf5; color:#252525; font-family:Georgia, "Times New Roman", serif; }.timeline-year { border-radius:0; background:#252525; }.authority-box { border-radius:0; }.land-symbol { border-radius:0; background:#fff1e6; border-color:#8f6957; }
+    .embed-mode .story-panel { display:none; }.embed-mode main { padding-left:0; }.embed-mode .map-header-box { left:22px; width:min(410px,calc(100vw - 44px)); }.embed-mode .control { left:22px; }.embed-mode .research-view { left:0; }.embed-mode .timeline-explorer { left:22px; }
     @media (max-width:620px) { .legend { display:none; } #case-panel { max-height:45vh; } }
   </style>
 </head>
 <body>
+  <script>if (new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed-mode");</script>
   <main aria-label="United States map of documented MMIP cases">
     <svg id="map" role="img" aria-labelledby="map-title map-desc">
       <title id="map-title">Documented MMIP cases</title>
@@ -464,5 +466,4 @@
   </script>
 </body>
 </html>
-
 

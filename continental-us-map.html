@@ -3,184 +3,190 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A scrolling research narrative on MMIP, extraction, and jurisdiction, with interactive map explorers.">
+  <meta name="description" content="Oil, Sweat, and Tears: a scrolling research narrative about MMIP, resource extraction, and jurisdiction.">
   <title>Oil, Sweat, and Tears</title>
   <style>
-    :root { --ink:#252525; --peach:#f3c7ac; --paper:#fffaf5; --muted:#5e4d44; --line:#a07561; --blue:#dcecf2; }
-    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; color:var(--ink); background:var(--peach); font-family:Georgia,"Times New Roman",serif; }
-    .site-nav { position:fixed; inset:0 0 auto; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 5vw; background:rgba(37,37,37,.96); color:var(--paper); box-shadow:0 2px 0 rgba(0,0,0,.2); }
-    .site-nav a { color:inherit; text-decoration:none; }.site-nav strong { font-size:18px; font-weight:400; }.site-nav nav { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:12px; font-size:13px; }.site-nav nav a { opacity:.72; }.site-nav nav a:hover,.site-nav nav a:focus,.site-nav nav a.active { opacity:1; text-decoration:underline; text-underline-offset:4px; }
-    .slide { min-height:100vh; padding:clamp(92px,11vw,130px) 8vw 72px; display:flex; flex-direction:column; justify-content:center; scroll-margin-top:62px; }.slide > * { width:min(1160px,100%); margin-left:auto; margin-right:auto; }
-    .cover { color:var(--paper); text-align:center; background:var(--ink); }.cover h1 { margin:0; font-size:clamp(52px,9vw,112px); font-weight:400; letter-spacing:-.04em; }.cover p { max-width:900px; margin:28px auto 0; font-size:clamp(21px,3.2vw,38px); line-height:1.25; }.cover .scroll-cue { margin-top:80px; font-size:14px; letter-spacing:.08em; text-transform:uppercase; opacity:.74; }
-    .chapter { border-top:1px solid rgba(37,37,37,.45); }.chapter h2 { margin:0 0 34px; font-size:clamp(38px,6vw,74px); font-weight:400; line-height:1.02; letter-spacing:-.035em; }.chapter h3 { margin:0 0 13px; font-size:22px; font-weight:400; }.chapter p,.chapter li { font-size:clamp(17px,1.7vw,21px); line-height:1.48; }.chapter p { margin:0 0 20px; }
-    .copy-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.96fr); gap:clamp(28px,6vw,80px); align-items:start; }.copy-grid .copy { max-width:690px; }.copy-grid ul { margin:0; padding-left:22px; }.copy-grid li { margin-bottom:17px; }
-    .note { margin-top:26px; padding:18px 21px; background:var(--paper); border-left:5px solid var(--ink); box-shadow:4px 4px 0 rgba(37,37,37,.2); }.note p { margin:0; font-size:17px; }
-    .triad { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--ink); border:1px solid var(--ink); }.triad article { min-height:220px; padding:25px; background:var(--paper); }.triad h3 { font-size:28px; }.triad p { font-size:17px; }
-    .map-slide { background:var(--ink); color:var(--paper); padding-left:4vw; padding-right:4vw; }.map-slide h2 { color:var(--peach); }.map-slide > p { max-width:860px; margin:0 auto 25px; font-size:19px; line-height:1.45; }.map-frame { display:block; width:min(1360px,100%); height:min(76vh,820px); margin:0 auto; border:4px solid var(--peach); background:var(--blue); box-shadow:8px 8px 0 rgba(0,0,0,.35); }.map-link { display:block; width:max-content; margin:18px auto 0; color:var(--paper); font-size:16px; }
-    .method-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1px; background:var(--ink); border:1px solid var(--ink); }.method-list div { padding:23px; background:var(--paper); }.method-list h3 { font-size:22px; }.method-list p { margin:0; font-size:17px; }
-    .sources { background:var(--paper); }.sources h2,.references h2 { font-size:clamp(42px,6vw,70px); }.source-list { columns:2; column-gap:52px; padding-left:23px; }.source-list li { break-inside:avoid; margin-bottom:16px; font-size:18px; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2 { color:var(--peach); }.references h3 { margin-top:34px; color:var(--peach); }.references ul { padding-left:22px; }.references li { margin-bottom:15px; font-size:16px; line-height:1.45; }.references a { color:var(--paper); text-underline-offset:3px; }
+    :root { --ink:#252525; --peach:#f3c7ac; --paper:#fffaf5; --muted:#5e4d44; --blue:#dcecf2; }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; background:var(--peach); color:var(--ink); font-family:Georgia,"Times New Roman",serif; }
+    .site-nav { position:fixed; inset:0 0 auto; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 5vw; background:rgba(37,37,37,.97); color:var(--paper); box-shadow:0 2px 0 rgba(0,0,0,.25); transition:transform .28s ease; }.site-nav.is-hidden { transform:translateY(-110%); }
+    .site-nav a { color:inherit; text-decoration:none; }.site-nav strong { font-size:18px; font-weight:400; }.site-nav nav { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:13px; font-size:13px; }.site-nav nav a { opacity:.74; }.site-nav nav a:hover,.site-nav nav a:focus,.site-nav nav a.active { opacity:1; text-decoration:underline; text-underline-offset:4px; }
+    .slide { min-height:100vh; padding:clamp(96px,11vw,132px) 8vw 72px; display:flex; flex-direction:column; justify-content:center; scroll-margin-top:60px; border-top:1px solid rgba(37,37,37,.42); }.slide > * { width:min(1160px,100%); margin-left:auto; margin-right:auto; }
+    .cover { color:var(--paper); text-align:center; background:var(--ink); border:0; }.cover h1 { margin:0; font-size:clamp(52px,9vw,112px); font-weight:400; letter-spacing:-.04em; }.cover p { max-width:900px; margin:28px auto 0; font-size:clamp(21px,3.2vw,38px); line-height:1.25; }.scroll-cue { margin-top:80px; font-size:14px; letter-spacing:.08em; text-transform:uppercase; opacity:.72; }
+    h2 { margin:0 0 34px; font-size:clamp(38px,6vw,74px); font-weight:400; line-height:1.02; letter-spacing:-.035em; } h3 { margin:0 0 13px; font-size:23px; font-weight:400; } p,li { font-size:clamp(17px,1.7vw,21px); line-height:1.42; } p { margin:0 0 20px; } ul { margin:0; padding-left:24px; } li { margin-bottom:17px; }
+    .copy-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.95fr); gap:clamp(30px,6vw,78px); align-items:start; }.copy-grid .copy { max-width:680px; }.media-stack { display:grid; gap:28px; margin:0; }.media-stack img,.single-image { display:block; width:100%; border:4px solid #17657d; box-shadow:5px 5px 0 rgba(37,37,37,.28); }.media-stack figcaption,.image-caption { margin:9px 0 0; text-align:center; font-size:16px; line-height:1.25; }
+    .photo-slide { position:relative; isolation:isolate; color:var(--paper); background:#252525 url("presentation-assets/image4.jpeg") center/cover no-repeat; }.photo-slide::before { content:""; position:absolute; inset:0; z-index:-1; background:rgba(0,0,0,.53); }.photo-slide h2,.photo-slide .copy-grid { width:min(1160px,100%); }.photo-slide li { color:var(--paper); }.photo-slide .credit { margin-top:32px; text-align:center; font-size:16px; }
+    .map-only { position:relative; min-height:100vh; padding:0; background:var(--blue); border:0; }.map-only iframe { display:block; width:100%; height:100vh; border:0; background:var(--blue); }.map-only .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }.continue-scroll { position:absolute; right:22px; bottom:22px; z-index:2; border:1px solid var(--paper); background:var(--ink); color:var(--paper); padding:10px 14px; cursor:pointer; font:16px Georgia,"Times New Roman",serif; box-shadow:3px 3px 0 rgba(0,0,0,.3); }
+    .source-title { background:var(--paper); }.source-title h2 { margin:0; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2,.references h3 { color:var(--peach); }.references h3 { margin-top:34px; }.references li { font-size:16px; line-height:1.42; }.references a { color:var(--paper); text-underline-offset:3px; }
     .reveal { opacity:0; transform:translateY(24px); transition:opacity .5s ease,transform .5s ease; }.reveal.visible { opacity:1; transform:none; } @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
-    @media (max-width:800px) { .site-nav { align-items:flex-start; padding:12px 18px; }.site-nav nav { display:none; }.slide { padding-left:7vw; padding-right:7vw; }.copy-grid,.method-list { grid-template-columns:1fr; }.triad { grid-template-columns:1fr; }.map-frame { height:70vh; }.source-list { columns:1; } }
+    @media (max-width:800px) { .site-nav { padding:12px 18px; }.site-nav nav { display:none; }.slide { padding-left:7vw; padding-right:7vw; }.copy-grid { grid-template-columns:1fr; }.map-only iframe { height:100svh; }.photo-slide { background-position:60% center; } }
   </style>
 </head>
 <body>
   <header class="site-nav">
     <a href="#top"><strong>Oil, Sweat, and Tears</strong></a>
     <nav aria-label="Page sections">
-      <a href="#crisis">Crisis</a><a href="#triad">Extraction</a><a href="#map">Map</a><a href="#checkerboard">Checkerboard</a><a href="#timeline">Timeline</a><a href="#sources">Sources</a>
+      <a href="#crisis">Crisis</a><a href="#energy">Energy</a><a href="#triad">Triad</a><a href="#checkerboard">Checkerboard</a><a href="#history">History</a><a href="#sources">Sources</a>
     </nav>
   </header>
   <main id="top">
     <section class="slide cover">
       <h1 class="reveal">Oil, Sweat, and Tears</h1>
-      <p class="reveal">What the correlation, and lack of correlation, between the missing and murdered Indigenous persons crisis and resource extraction could mean</p>
+      <p class="reveal">What the correlation – and lack thereof – between the missing and murdered Indigenous persons crisis (MMIP) and resource extraction could mean.</p>
       <div class="scroll-cue reveal">Scroll to explore</div>
     </section>
 
-    <section class="slide chapter" id="crisis">
-      <h2 class="reveal">Crisis Overview</h2>
+    <section class="slide" id="crisis">
+      <h2 class="reveal">Crisis Overview (Map Showing Only Cases)</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>Most missing and unidentified cases involving Indigenous persons occur off tribal land. The crisis therefore reaches far beyond reservation boundaries and requires a national response.</p>
-          <p>Many federal resources for Indigenous victims focus on tribal communities, even though many Indigenous people live off reservation and many cases occur away from tribal land.</p>
-          <p>National systems such as the National Crime Information Center and the National Missing and Unidentified Persons System help investigators, but gaps in reported data still prevent a complete picture.</p>
-          <p>Recent federal initiatives have improved coordination and data collection. Contested legal jurisdiction remains a central barrier to justice in many cases.</p>
+          <ul>
+            <li>Most missing and unidentified cases involving Indigenous persons occur off tribal land, meaning that many violent victimizations of Indigenous persons may also occur off tribal lands (Hanson, 2023, p.17). Therefore, the crisis is not restricted to just Indigenous communities, but a national problem.</li>
+            <li>While Indigenous persons living off tribal lands can access federal victim services resources for Indigenous individuals, many of such resources are directed towards tribal communities (Hanson, 2023, p.17). When considering how most Indigenous persons live off-reservation and that many missing persons cases happen off tribal lands, these resources are insufficient.</li>
+            <li>There are many resources to help law enforcement pursue MMIP cases like the National Crime Information Center and the National Missing and Unidentified Persons System, but their gaps in available data fail to provide a comprehensive picture of the crisis (Hanson, 2023, p.2). So, many cases go unreported and thus, not pursued.</li>
+            <li>In recent years, the federal government has launched initiatives to improve federal, state, and tribal law enforcement coordination like the Operation Lady Justice Task Force and passed legislation to improve MMIP data collection like Savanna's Act in 2020 (Hanson, 2023, pp.23-26). This is a step in the right direction, but one of the most crucial factors that inhibits justice is not the lack of data or law enforcement coordination. It is the contested legal jurisdiction over many MMIP cases.</li>
+          </ul>
         </div>
-        <aside class="note"><p>Use the map to explore documented case locations. A dot represents the workbook’s location proxy rather than a precise incident location.</p></aside>
+        <figure class="media-stack"><img src="presentation-assets/image1.png" alt="Screenshot of a United States map showing documented MMIP cases"><figcaption>Documented MMIP cases</figcaption></figure>
       </div>
     </section>
 
-    <section class="slide chapter">
+    <section class="slide" id="energy">
       <h2 class="reveal">The Demand for Energy and Labor</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>United States oil production rose sharply over the past two decades. Pipelines connect production with power plants, refineries, airports, military bases, and other essential infrastructure.</p>
-          <p>Extraction sites also create high demand for temporary labor. Man camps offer housing near remote work, but shortages have pushed some workers into vehicles and other makeshift facilities.</p>
+          <ul>
+            <li>Oil production in the United States has increased by a factor of eight over the past two decades; in 2019, domestic oil production was the highest among all countries in the world (Bracmort et al., 2021). To distribute oil to infrastructure like power plants, refineries, airports, and military bases, pipelines are “integral to the nation's energy supply” (Bracmort et al., 2021).</li>
+            <li>To supply resource extraction labor needs, many extraction sites have spawned temporary labor sites known as man camps. The demand is so high that despite high salaries, housing shortages in man camps have pushed many laborers to try to live in vehicles or “other makeshift facilities” (Sulzberger, 2011).</li>
+          </ul>
         </div>
-        <aside class="note"><p>Energy development changes the population, infrastructure, and service demands of rural places. Those changes form the context for the map’s extraction and man-camp layers.</p></aside>
+        <div class="media-stack">
+          <figure><img src="presentation-assets/image3.png" alt="Chart of United States oil and natural gas production from 2000 to 2019"><figcaption>Oil and natural gas production levels have risen from 2000 to 2019 (Congressional Research Service).</figcaption></figure>
+          <figure><img src="presentation-assets/image2.png" alt="Map of the United States oil pipeline network"><figcaption>The nationwide oil pipeline network is extensive (National Pipeline Mapping System).</figcaption></figure>
+        </div>
       </div>
     </section>
 
-    <section class="slide chapter" id="triad">
+    <section class="slide photo-slide" id="triad">
       <h2 class="reveal">The Extraction Triad</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>Man camps have been documented as places of heightened sexual-violence risk. The project examines three connected forms of extraction and the legal conditions that shape community safety.</p>
-          <p>Rural communities, including tribal law-enforcement agencies, often lack resources to absorb rapid population growth during an oil boom. The challenge includes both harmful conduct and the ability to investigate and prosecute it.</p>
-        </div>
-        <div class="triad" aria-label="The three forms of extraction">
-          <article><h3>Resource extraction</h3><p>Oil, gas, mining, and related development reshape land use and local economies.</p></article>
-          <article><h3>Labor extraction</h3><p>Temporary workforces move into rural places, often through man camps and other short-term housing.</p></article>
-          <article><h3>Land extraction</h3><p>Historic taking and allotment of Indigenous land created the checkerboard conditions examined below.</p></article>
+          <ul>
+            <li>Man camps are documented “hotbeds of sexual violence” (Condes, 2021, p.517). This is a consequence of what I will define as a “triad” of extraction: resource extraction; labor extraction, the use of physical labor in rural areas; and land extraction, the process of taking and allotting land originally of Indigenous communities.</li>
+            <li>Annita Lucchesi, a Southern Cheyenne woman working for the National Indigenous Women's Resource Council, recalled a statement from an oil worker: “in North Dakota you can take whatever pretty little Indian girl that you like and you can do whatever you want and police don't give a fuck about it” (Condes, 2021, pp.530-531). This reflects how oftentimes, tribal police simply cannot prosecute crimes committed by non-Indigenous individuals.</li>
+            <li>Communities near man camps rarely have enough resources to accommodate rapid population increases as a result of an oil boom, including tribal law enforcement: many have reported being unable to handle the increased crime as a result of man camps (Condes, 2021, pp.529-530). The problem is multifaceted: both the inability to prosecute and the behavior of man camp laborers exacerbate the MMIP crisis.</li>
+            <li>The root problem behind many of these MMIP cases is not the inability to find the perpetrator, but the inability to prosecute them. This inability to prosecute comes from a series of historical laws creating a legal jurisdictional “checkerboard”.</li>
+          </ul>
         </div>
       </div>
+      <p class="credit reveal">Background: Target Logistics camp in Williston, North Dakota (Nicole Bengiveno).</p>
     </section>
 
-    <section class="slide map-slide" id="map">
-      <h2 class="reveal">Visualizing the Triad</h2>
-      <p class="reveal">Explore documented MMIP cases, man camps, extraction sites, Indigenous communities, and proximity zones. Each layer can be independently toggled and features retain their available source metadata.</p>
-      <iframe class="map-frame reveal" title="Interactive MMIP, man camp, extraction, and Indigenous community map" src="map-explorer.html"></iframe>
-      <a class="map-link" href="map-explorer.html" target="_blank" rel="noopener">Open the map in a full page</a>
+    <section class="slide map-only" id="main-map">
+      <h2 class="sr-only">Visualizing the Triad (The Main Map)</h2>
+      <iframe title="Visualizing the Triad interactive map" src="map-explorer.html?embed=1"></iframe>
+      <button class="continue-scroll" type="button">Continue scrolling ↓</button>
     </section>
 
-    <section class="slide chapter">
+    <section class="slide">
       <h2 class="reveal">Data Collection Methodology</h2>
-      <div class="method-list reveal">
-        <div><h3>MMIP cases</h3><p>Sources include the Bureau of Indian Affairs, FBI, Urban Indian Health Institute, state attorneys general, legislatures, and news reporting.</p></div>
-        <div><h3>Extraction sites</h3><p>Sources include the U.S. Energy Information Administration, U.S. Geological Survey, and corporate materials.</p></div>
-        <div><h3>Man camps</h3><p>Sources include Target Hospitality Corp, Corporate Hospitality Services Oilfield Lodging, and the North Dakota Man Camp Project.</p></div>
-        <div><h3>Indigenous lands</h3><p>Sources include the Bureau of Indian Affairs, Census Bureau, Federal Register, and Tribal Nation websites.</p></div>
+      <div class="copy-grid reveal">
+        <div class="copy">
+          <p>Using Claude and ChatGPT, we scraped data from existing government and NGO datasets. The full list can be found at the bottom of the page.</p>
+          <p>For MMIP case locations, we gathered data from sources including but not limited to the Bureau of Indian Affairs, the Federal Bureau of Investigation, the Urban Indian Health Institute, as well as state attorney general offices, legislatures, and news articles.</p>
+          <p>For resource extraction site locations, we collected data from government and corporate sources including but not limited to the United States Energy Information Administration, United States Geological Survey, Heidelberg Materials, Martin Marietta, and Cleveland Cliffs.</p>
+        </div>
+        <div class="copy">
+          <p>Data for man camp locations came from sources including but not limited to Target Hospitality Corp, Corporate Hospitality Services Oilfield Lodging, and the North Dakota Man Camp Project.</p>
+          <p>The locations for Indigenous lands, communities, and reservation came from the Bureau of Indian Affairs, the United States Census Bureau, the Federal Register, and numerous individual tribe websites.</p>
+          <p>Many sources provided information for multiple categories of data. Missing information was recorded as unknown rather than inferred, and aggregate evidence was not assigned to individual cases, facilities, or communities.</p>
+        </div>
       </div>
-      <div class="note reveal"><p>When a source left information unavailable, the dataset records it as unknown rather than inferring a value. Aggregate evidence is not assigned to individual cases, facilities, or communities.</p></div>
     </section>
 
-    <section class="slide chapter">
+    <section class="slide">
       <h2 class="reveal">Our Hypothesis</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>The map appears to show a weak correlation between documented MMIP cases and resource extraction sites, man-camp locations, and Indigenous lands. The last finding aligns with the fact that many Indigenous people do not live on reservations.</p>
-          <p>Existing research documents a stronger relationship between MMIP, extraction, and man camps. The apparent difference may reflect what available data captures rather than the true absence of a relationship.</p>
-          <p>Jurisdictional complications can inhibit reporting and data collection. Community members may also hesitate to report a missing person because of fear, mistrust, or limited faith in the justice system.</p>
+          <p>Based on the map, there appears a weak correlation between MMIP cases with resource extraction sites, man camp locations, and Indigenous lands. The lack of correlation with the lattermost factor is unsurprising: most Indigenous peoples do not live on reservations. However, given that there is a cited, strong correlation between MMIP and resource extraction and man camps, this apparent disparity was puzzling.</p>
+          <p>It is important to consider that data merely reflects what information is available. Therefore, given that there is an established correlation between MMIP and resource extraction and man camps, we believe that this lack of correlation is not due to an actual lack of correlation, but external factors that make the collection of MMIP case data difficult.</p>
         </div>
-        <aside class="note"><p>Data shows what institutions record. Missing data can hide relationships as much as it can reveal them.</p></aside>
+        <div class="copy"><p>We believe that the underlying cause for insufficient data collection are jurisdictional complications that inhibit data collection. For instance, federal law does not require tribal law enforcement to report missing children under the age of 21 (Government Accountability Office, p.19). Additionally, according to both law enforcement officials and tribal representatives, Indigenous community members may not report missing Indigenous women due to fear, mistrust, or a lack of faith in the judicial process. This brings us to our next point: the jurisdictional “checkerboard”.</p></div>
       </div>
     </section>
 
-    <section class="slide chapter" id="checkerboard">
+    <section class="slide" id="checkerboard">
       <h2 class="reveal">Jurisdictional Checkerboard</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>Local communities usually address local criminal-justice issues through locally controlled institutions. On tribal lands, federal and state governments operate much of the criminal-justice system alongside Tribal Nations.</p>
-          <p>Jurisdiction can shift with the location of an offense and the legal status of the people involved. Confusion during the first hours of an investigation can waste resources and delay action in violent-crime cases.</p>
-          <p>The resulting patchwork confronts communities with complicated rules and procedures, often in places that already face geographic isolation and limited public resources.</p>
+          <ul>
+            <li>Usually, local communities address local criminal justice issues through locally-controlled institutions while the Federal government merely enforces federal laws for criminal justice procedures. However, on tribal lands, the Federal and State governments operate the “vast majority” of criminal justice systems over local Tribal governments (Indian Law &amp; Order Commission, 2015, p.1). This risks of confusion and complications between law enforcement.</li>
+            <li>Jurisdiction, which changes based on whether the victim and suspect are Indigenous or not, risks human lives, wastes resources, and prolongs government inefficiency in “the crucial first hours of an investigation” (Indian Law &amp; Order Commission, 2015, p.9). In a serious crime like murder and sexual violence were time is critical, these jurisdictional hurdles inhibit the pursuit of justice.</li>
+            <li>The checkerboard-like patchwork of jurisdictions subjects individuals living in some of the most impoverished and isolated communities in the country to confront highly complicated legal rules and procedures. (Testimony of Troy A. Eid, 2009, p.40) This compounding of challenges continues the cycle of injustice - socioeconomic and legal - faced by Indigenous communities.</li>
+          </ul>
         </div>
-        <aside class="note"><p>The map treats jurisdiction as a legal framework with geographic dimensions, not as a single clean set of boundaries.</p></aside>
+        <figure class="media-stack"><img src="presentation-assets/image6.png" alt="Jurisdiction decision flowchart for Public Law 280 and non-Public Law 280 states"><figcaption>The process for deciding who has jurisdiction over a case is highly complex (Indian Law &amp; Order Commission).</figcaption></figure>
       </div>
     </section>
 
-    <section class="slide chapter">
+    <section class="slide" id="history">
       <h2 class="reveal">Checkerboard History</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>Public Law 280 granted certain states criminal jurisdiction in most Indian country within their borders, with important reservation-level exceptions. California, Minnesota, Nebraska, Oregon, and Wisconsin form the original mandatory-state group shown in the timeline explorer.</p>
-          <p>The Indian Civil Rights Act places statutory limits on Tribal Nation sentencing authority. Other statutes and case-specific rules affect whether tribal, state, and federal authority overlap.</p>
-          <p>The result affects more than legal theory. Where an agency cannot act quickly or responsibility is contested, the consequences reach public safety and community welfare.</p>
+          <ul>
+            <li>Public Law 280 gave the states California, Minnesota, Nebraska, Oregon, and Wisconsin jurisdiction over offenses committed by or against Indigenous peoples on tribal lands, with the exception of Red Lake Reservation in Minnesota; Warm Springs Reservation in Oregon; and Menominee Reservation in Wisconsin (Public Law 280, 2010, p.588). While it extends to only five states, this law significantly contributes towards the jurisdictional patchwork.</li>
+            <li>As a result of the Indian Civil Rights Act of 1968, tribal courts usually can not sentence a defendant to more than a 1-year prison term or a $5000 fine, or both, for each respective charge (Indian Civil Rights Act, 2022, p.3). This obstructs the deliver of justice for heinous crimes like homicide and rape.</li>
+            <li>Tribal courts can impose greater penalties for defendants who had previously been convicted of a similar offense elsewhere in the United States or are currently being prosecuted for an offense that might entail imprisonment of more than 1 year; even so, sentences cannot exceed 3 years or a $5000 fine or both, for an offense. (Indian Civil Rights Act, 2022, p.3) These sentences are drastically disproportionate compared to how many crimes to similar degrees would be prosecuted in the rest of the United States.</li>
+            <li>Regardless of the number of charges, however, a defendant's cumulative sentences may not exceed a term of more than 9 years (Indian Civil Rights Act, 2022, p.3). Not only does this limit tribal prosecutorial power, but it also makes it so that even if tribal courts possess the jurisdiction to prosecute a defendant, public safety and security becomes at risk. The cost is no longer just about jurisdiction, but community welfare.</li>
+          </ul>
         </div>
-        <aside class="note"><p>Use the Jurisdiction Timeline Explorer to see each selected law’s scope, authority effects, land implications, and the limits of map-based legal generalization.</p></aside>
+        <figure class="media-stack"><img src="presentation-assets/image7.png" alt="Scanned text of Public Law 280"><figcaption>Some states have jurisdiction over crimes involving Indigenous victims or on Indigenous lands, rather than the federal or tribal governments (Public Law 280).</figcaption></figure>
       </div>
     </section>
 
-    <section class="slide map-slide" id="timeline">
-      <h2 class="reveal">Jurisdictional Timeline Explorer</h2>
-      <p class="reveal">Move through the selected legal events to compare their effects on Tribal Nation, federal, and state authority. The map uses careful geographic cues rather than claiming unsupported legal boundaries.</p>
-      <iframe class="map-frame reveal" title="Jurisdiction and legal history timeline explorer" src="jurisdiction-history-sample.html"></iframe>
-      <a class="map-link" href="jurisdiction-history-sample.html" target="_blank" rel="noopener">Open the timeline in a full page</a>
+    <section class="slide map-only" id="timeline">
+      <h2 class="sr-only">The Jurisdictional Timeline (Jurisdictional Timeline Explorer)</h2>
+      <iframe title="Jurisdictional Timeline Explorer" src="jurisdiction-history-sample.html"></iframe>
+      <button class="continue-scroll" type="button">Continue scrolling ↓</button>
     </section>
 
-    <section class="slide chapter">
+    <section class="slide">
       <h2 class="reveal">What This Means</h2>
       <div class="copy-grid reveal">
         <div class="copy">
-          <p>Available data does not show the full MMIP crisis. Jurisdictional complexity can inhibit reporting, investigation, and data collection, which leaves existing records incomplete.</p>
-          <p>The relationship among MMIP, extraction, and man camps may be stronger than the documented map alone suggests. Other important relationships may also remain hidden because the available data cannot yet establish them.</p>
-          <p>Comparing qualitative evidence with the documented quantitative record can identify contradictions, improve research questions, and support action.</p>
+          <p>As previously mentioned, data merely reflects what information is available. And, knowing that the ongoing jurisdictional checkerboard inhibits data collection, existing information does not accurately reflect the whole picture of the MMIP crisis.</p>
+          <p>We can reasonably believe that MMIP-resource extraction and MMIP-man camp relationships exist. However, given that the correlation between these variables on the map were weak, there may be correlations between MMIP and other factors that simply lack the data to prove them. Investigating the “gaps” between variables of which correlation supposedly exists is thus necessary to either gain new information or correct our misunderstandings.</p>
+          <p>Insufficient data collection is a pressing issue in the MMIP crisis. We therefore believe that comparing qualitative information and existing quantitative data can reveal contradictions in our current understanding of the MMIP crisis, ultimately incentivizing us to take action.</p>
         </div>
-        <aside class="note"><p>A weak pattern on a map should prompt investigation, especially when other evidence suggests a stronger underlying relationship.</p></aside>
       </div>
     </section>
 
-    <section class="slide sources" id="sources">
-      <h2 class="reveal">Data Sources</h2>
-      <ul class="source-list reveal">
-        <li>Bureau of Indian Affairs</li><li>Federal Bureau of Investigation</li><li>Urban Indian Health Institute</li><li>State attorneys general and legislatures</li><li>United States Energy Information Administration</li><li>United States Geological Survey</li><li>Target Hospitality Corp</li><li>Corporate Hospitality Services Oilfield Lodging</li><li>North Dakota Man Camp Project</li><li>United States Census Bureau</li><li>Federal Register</li><li>Tribal Nation websites</li><li>Government and NGO reports</li><li>Corporate materials and news reporting</li>
-      </ul>
-      <div class="note reveal"><p>See the interactive map’s feature panels for source links attached to individual records where available.</p></div>
-    </section>
+    <section class="slide source-title" id="sources"><h2 class="reveal">Data Sources</h2></section>
 
     <section class="slide references">
       <h2 class="reveal">References</h2>
-      <h3 class="reveal">Primary sources</h3>
+      <h3 class="reveal">Primary Sources</h3>
       <ul class="reveal">
-        <li><a href="https://www.govinfo.gov/content/pkg/STATUTE-67/pdf/STATUTE-67-Pg588.pdf" target="_blank" rel="noopener">Public Law 280, 67 Stat. 588</a></li>
-        <li><a href="https://www.archives.gov/milestone-documents/dawes-act" target="_blank" rel="noopener">Dawes Act, 24 Stat. 388</a></li>
-        <li><a href="https://www.indian.senate.gov/wp-content/uploads/upload/files/June252009.pdf" target="_blank" rel="noopener">Testimony of Troy A. Eid, U.S. Senate Committee on Indian Affairs</a></li>
-        <li><a href="https://www.govinfo.gov/content/pkg/COMPS-343/pdf/COMPS-343.pdf" target="_blank" rel="noopener">Indian Civil Rights Act</a></li>
+        <li>Act of 2010, Pub. L. No. 280, 67 Stat. 3 (2010). <a href="https://www.govinfo.gov/content/pkg/STATUTE-67/pdf/STATUTE-67-Pg588.pdf" target="_blank" rel="noopener">https://www.govinfo.gov/content/pkg/STATUTE-67/pdf/STATUTE-67-Pg588.pdf</a></li>
+        <li>Dawes Act, 24 Stat. (May 8, 1906). <a href="https://www.archives.gov/milestone-documents/dawes-act" target="_blank" rel="noopener">https://www.archives.gov/milestone-documents/dawes-act</a></li>
+        <li>HEARING BEFORE THE COMMITTEE ON INDIAN AFFAIRS UNITED STATES SENATE, 111th Cong., 1st Sess. 37-49 (2009) (testimony of Troy A. Eid). <a href="https://www.indian.senate.gov/wp-content/uploads/upload/files/June252009.pdf" target="_blank" rel="noopener">https://www.indian.senate.gov/wp-content/uploads/upload/files/June252009.pdf</a></li>
+        <li>Indian Civil Rights Act, Pub. L. No. 90-284, 73 Stat. (2022). <a href="https://www.govinfo.gov/content/pkg/COMPS-343/pdf/COMPS-343.pdf" target="_blank" rel="noopener">https://www.govinfo.gov/content/pkg/COMPS-343/pdf/COMPS-343.pdf</a></li>
       </ul>
-      <h3 class="reveal">Secondary sources</h3>
+      <h3 class="reveal">Secondary Sources</h3>
       <ul class="reveal">
-        <li><a href="https://www.congress.gov/crs-product/R46723" target="_blank" rel="noopener">Bracmort et al., U.S. Energy in the 21st Century: A Primer</a></li>
-        <li><a href="https://scholarlycommons.law.northwestern.edu/cgi/viewcontent.cgi?article=1474&context=nulr" target="_blank" rel="noopener">Condes, Man Camps and Bad Men</a></li>
-        <li><a href="https://www.gao.gov/assets/gao-22-104045.pdf" target="_blank" rel="noopener">Government Accountability Office, MMIP federal response report</a></li>
-        <li><a href="https://www.congress.gov/crs_external_products/R/PDF/R47010/R47010.6.pdf" target="_blank" rel="noopener">Hanson, MMIP overview for Congress</a></li>
-        <li><a href="https://www.aisc.ucla.edu/iloc/report/files/Chapter_1_Jurisdiction.pdf" target="_blank" rel="noopener">Indian Law and Order Commission, A Roadmap for Making Native America Safer</a></li>
-        <li><a href="https://www.nytimes.com/2011/11/26/us/north-dakota-oil-boom-creates-camps-of-men.html" target="_blank" rel="noopener">Sulzberger, Oil Rigs Bring Camps of Men to the Prairie</a></li>
+        <li>Bracmort, K., Brown, P., Campbell, R. J., Clark, C. E., Diaz, M. N., Holt, M., Lawson, A. J., Ratner, M., Tracy, B. S., &amp; Yacobucci, B. D. (2021, March 16). U.S. Energy in the 21st Century: A Primer. <a href="https://www.congress.gov/crs-product/R46723" target="_blank" rel="noopener">https://www.congress.gov/crs-product/R46723</a></li>
+        <li>Condes, A. (2021). Man Camps and Bad Men: Litigating Violence Against American Indian Women. Northwestern University Law Review, 116(2). <a href="https://scholarlycommons.law.northwestern.edu/cgi/viewcontent.cgi?article=1474&context=nulr" target="_blank" rel="noopener">https://scholarlycommons.law.northwestern.edu/cgi/viewcontent.cgi?article=1474&amp;context=nulr</a></li>
+        <li>Governmental Accountability Office. (n.d.). Missing or Murdered Indigenous Women: New Efforts Are Underway but Opportunities Exist to Improve the Federal Response. <a href="https://www.gao.gov/assets/gao-22-104045.pdf" target="_blank" rel="noopener">https://www.gao.gov/assets/gao-22-104045.pdf</a></li>
+        <li>Hanson, E. J. (2023, July 3). Missing and Murdered Indigenous People (MMIP): Overview of Recent Research, Legislation, and Selected Issues for Congress. <a href="https://www.congress.gov/crs_external_products/R/PDF/R47010/R47010.6.pdf" target="_blank" rel="noopener">https://www.congress.gov/crs_external_products/R/PDF/R47010/R47010.6.pdf</a></li>
+        <li>A Roadmap For Making Native America Safer: Report To The President And Congress Of The United States. (2015, May). Indian Law &amp; Order Commission. <a href="https://www.aisc.ucla.edu/iloc/report/files/Chapter_1_Jurisdiction.pdf" target="_blank" rel="noopener">https://www.aisc.ucla.edu/iloc/report/files/Chapter_1_Jurisdiction.pdf</a></li>
+        <li>Sulzberger, A. G. (2011, November 25). Oil Rigs Bring Camps of Men to the Prairie. The New York Times. <a href="https://www.nytimes.com/2011/11/26/us/north-dakota-oil-boom-creates-camps-of-men.html" target="_blank" rel="noopener">https://www.nytimes.com/2011/11/26/us/north-dakota-oil-boom-creates-camps-of-men.html</a></li>
       </ul>
     </section>
   </main>
   <script>
-    const sections=[...document.querySelectorAll(".slide")], links=[...document.querySelectorAll(".site-nav nav a")];
-    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return; const id=entry.target.id; links.forEach(link=>link.classList.toggle("active",link.getAttribute("href")==="#"+id)); entry.target.querySelectorAll(".reveal").forEach(el=>el.classList.add("visible"));});},{threshold:.18});
-    sections.forEach(section=>observer.observe(section)); document.querySelectorAll(".cover .reveal").forEach(el=>el.classList.add("visible"));
+    const slides=[...document.querySelectorAll(".slide")], links=[...document.querySelectorAll(".site-nav nav a")], nav=document.querySelector(".site-nav");
+    const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return; const section=entry.target; nav.classList.toggle("is-hidden",section.classList.contains("map-only")); const id=section.id; links.forEach(link=>link.classList.toggle("active",link.getAttribute("href")==="#"+id)); section.querySelectorAll(".reveal").forEach(el=>el.classList.add("visible"));});},{threshold:.18});
+    slides.forEach(slide=>observer.observe(slide)); document.querySelectorAll(".cover .reveal").forEach(el=>el.classList.add("visible"));
+    document.querySelectorAll(".continue-scroll").forEach(button=>button.addEventListener("click",()=>button.closest("section").nextElementSibling.scrollIntoView({behavior:"smooth"})));
   </script>
 </body>
 </html>
