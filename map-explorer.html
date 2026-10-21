@@ -60,6 +60,8 @@
     .research-article h1, .timeline-card h1, .timeline-event h2 { font-family:Georgia, "Times New Roman", serif; color:#252525; font-weight:400; }.research-article p, .timeline-event p, .timeline-card > p { color:#443933; }
     .timeline-controls select { border-radius:0; border-color:#252525; background:#fffaf5; color:#252525; font-family:Georgia, "Times New Roman", serif; }.timeline-year { border-radius:0; background:#252525; }.authority-box { border-radius:0; }.land-symbol { border-radius:0; background:#fff1e6; border-color:#8f6957; }
     .embed-mode .story-panel { display:none; }.embed-mode main { padding-left:0; }.embed-mode .map-header-box { left:22px; width:min(410px,calc(100vw - 44px)); }.embed-mode .control { left:22px; }.embed-mode .research-view { left:0; }.embed-mode .timeline-explorer { left:22px; }
+    .embed-mode .map-header-box { box-sizing:border-box; width:min(250px,calc(50vw - 36px)); }.embed-mode .map-header-box.is-collapsed { width:auto; }.embed-mode .layer-controls { left:auto; right:22px; }
+    @media (max-width:850px) { .embed-mode .legend { display:none; } }
     @media (max-width:620px) { .legend { display:none; } #case-panel { max-height:45vh; } }
   </style>
 </head>
@@ -210,6 +212,10 @@
     enableCollapse("map-legend", "toggle-legend");
     enableCollapse("map-layer-controls", "toggle-layer-controls");
     enableCollapse("map-header-box", "toggle-map-header");
+    if (document.body.classList.contains("embed-mode") && window.innerWidth <= 850) {
+      document.getElementById("toggle-map-header").click();
+      document.getElementById("toggle-layer-controls").click();
+    }
     document.getElementById("toggle-story-panel").addEventListener("click", event => {
       const minimized = document.getElementById("story-panel").classList.toggle("is-minimized");
       document.body.classList.toggle("guide-collapsed", minimized);
@@ -383,7 +389,19 @@
     svg.call(zoom).on("dblclick.zoom", null); document.getElementById("reset").addEventListener("click", () => svg.transition().duration(450).call(zoom.transform, d3.zoomIdentity));
     function drawBase() {
       const {width, height} = mapSize(); svg.attr("viewBox", `0 0 ${width} ${height}`);
-      projection = d3.geoAlbersUsa().fitExtent([[18,76],[width-18,height-18]], states); path = d3.geoPath(projection);
+      let extent = [[18,76],[width-18,height-18]];
+      if (document.body.classList.contains("embed-mode")) {
+        const bounds = svg.node().getBoundingClientRect();
+        if (width > 850) {
+          const left = document.getElementById("map-header-box").getBoundingClientRect().right - bounds.left + 16;
+          const right = Math.min(document.getElementById("map-layer-controls").getBoundingClientRect().left, document.getElementById("map-legend").getBoundingClientRect().left) - bounds.left - 16;
+          extent = [[left,24],[right,Math.max(25,height-75)]];
+        } else {
+          const top = Math.max(document.getElementById("map-header-box").getBoundingClientRect().bottom, document.getElementById("map-layer-controls").getBoundingClientRect().bottom) - bounds.top + 14;
+          extent = [[18,top],[width-18,Math.max(top+1,height-75)]];
+        }
+      }
+      projection = d3.geoAlbersUsa().fitExtent(extent, states); path = d3.geoPath(projection);
       statesLayer.selectAll("path.state").data(states.features, d => d.id).join("path").attr("class","state").attr("d",path);
       statesLayer.selectAll("path.border").data([borders]).join("path").attr("class","border").attr("d",path); renderCases(); renderCamps(); renderExtraction(); renderCommunities(); renderProximityZones(); renderScaleBar(width, height);
     }
