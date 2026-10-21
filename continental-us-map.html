@@ -17,6 +17,7 @@
     .photo-slide { position:relative; isolation:isolate; color:var(--paper); background:#252525 url("presentation-assets/image4.jpeg") center/cover no-repeat; }.photo-slide::before { content:""; position:absolute; inset:0; z-index:-1; background:rgba(0,0,0,.53); }.photo-slide h2,.photo-slide .copy-grid { width:min(1160px,100%); }.photo-slide li { color:var(--paper); }.photo-slide .credit { margin-top:32px; text-align:center; font-size:16px; }
     .map-only { position:relative; min-height:100vh; padding:0; background:var(--blue); border:0; }.map-only iframe { display:block; width:100%; height:100vh; border:0; background:var(--blue); }.map-only .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }.continue-scroll { position:absolute; right:22px; bottom:22px; z-index:2; border:1px solid var(--paper); background:var(--ink); color:var(--paper); padding:10px 14px; cursor:pointer; font:16px Georgia,"Times New Roman",serif; box-shadow:3px 3px 0 rgba(0,0,0,.3); }
     .source-title { background:var(--paper); }.source-title h2 { margin:0; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2,.references h3 { color:var(--peach); }.references h3 { margin-top:34px; }.references li { font-size:16px; line-height:1.42; }.references a { color:var(--paper); text-underline-offset:3px; }
+    .data-sources { min-height:auto; justify-content:flex-start; background:var(--paper); }.data-sources h2 { margin-bottom:20px; }.data-sources h3 { margin:32px 0 12px; font-size:28px; }.data-sources h4 { margin:24px 0 8px; font-size:19px; }.data-sources p { max-width:1160px; }.data-sources .source-note { color:var(--muted); font-size:16px; }.data-sources .source-list { font-size:17px; line-height:1.65; }
     .reveal { opacity:0; transform:translateY(24px); transition:opacity .5s ease,transform .5s ease; }.reveal.visible { opacity:1; transform:none; } @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
     @media (max-width:800px) { .site-nav { padding:12px 18px; }.site-nav nav { display:none; }.slide { padding-left:7vw; padding-right:7vw; }.copy-grid { grid-template-columns:1fr; }.map-only iframe { height:100svh; }.photo-slide { background-position:60% center; } }
   </style>
@@ -161,6 +162,36 @@
     </section>
 
     <section class="slide source-title" id="sources"><h2 class="reveal">Data Sources</h2></section>
+
+    <section class="slide data-sources" aria-labelledby="source-map-heading">
+      <h2 id="source-map-heading">Sources for the map</h2>
+      <p>Outlets, agencies, and datasets consulted for the four map datasets, grouped by topic. Some sources serve more than one category.</p>
+      <p class="source-note">The supplied source map distinguishes the original collection from an additional research pass. The additional pass is described there as not independently verified; its entries should be checked against the original sources before use.</p>
+
+      <h3>MMIP case data</h3>
+      <h4>Individual cases: investigative and tribal journalism</h4>
+      <p class="source-list">NBC News Dateline; Minot Daily News; Bismarck Tribune; University of Montana Native News; Missoulian; Bozeman Magazine; Helena Independent Record; MTN News (KPAX); Gillette News Record; Billings Gazette; Cowboy State Daily; Argus Leader; Country Today; KOTA Territory News; CBS News; Deseret News; KJZZ; Tucson Sentinel; PBS NewsHour; 5280 Magazine; The Colorado Sun; Denver 7; The Columbian; Seattle Times; Yakima Herald-Republic; The Vanished; Central Oregon; Indian Daily; Alaska Beacon; CBC News/AP; MPR News; Lakeland PBS; Wisconsin Examiner; PBS Wisconsin; Tulsa World; CBS San Francisco (“Unseen”); Pacific Council; Idaho Capital Sun.</p>
+      <h4>Aggregate statistics and task forces</h4>
+      <p class="source-list">Urban Indian Health Institute (2018 report); New Mexico MMIWR Task Force / Department of Justice; North Dakota Attorney General’s Office; Montana Department of Justice; Wyoming Survey &amp; Analysis Center; South Dakota Attorney General’s Office; Utah Legislature / Wilder Research; Colorado Division of Criminal Justice (OMMIR); Washington Attorney General’s Office; Minnesota Legislative Reference Library; Michigan Attorney General’s Office; Cherokee Nation Marshal Service; Yurok Tribal Court and Sovereign Bodies Institute; Louisiana Division of Administration; Nebraska Legislature (LB154); U.S. Department of Justice, District of Oregon; Bureau of Indian Affairs Operation Lady Justice; Alaska Native Women’s Resource Center; Not Invisible Act Commission.</p>
+      <h4>Additional pass — not independently verified</h4>
+      <p class="source-list">Bureau of Indian Affairs Missing and Murdered Unit case database; FBI “Voices Not Forgotten” and MMIP program; individual FBI case profiles; Wisconsin Department of Justice and Native News Online; Lumbee Tribe and WUNC; Washington House Democrats; U.S. House Committee hearing record; Alaska Native News; Nome Nugget and Pulitzer Center.</p>
+
+      <h3>Man camp data</h3>
+      <p class="source-list">Target Hospitality Corp. (10-K filings); CHS Oilfield Lodging; North Dakota Man Camp Project, University of North Dakota; University of Montana Native News, “Fear Next Door”; MinnPost / MPR News (Line 3); Wikipedia (background only).</p>
+      <h4>Additional pass — not independently verified</h4>
+      <p class="source-list">Target Hospitality lodge network map; Target Logistics archival Desert Sage Lodge announcement; Doyon Drilling camp network (Alaska); CHS Midland lodging page; Midland Reporter-Telegram (Carlsbad camp); ICT News, “Brave Heart Women” (regional context only, not used to assign incidents to facilities).</p>
+
+      <h3>Resource extraction site data</h3>
+      <p class="source-list">USGS Mineral Resources Data System; USGS Mineral Commodity Summaries; Department of Energy NETL Energy Data eXchange orphaned-well dataset; New Mexico Oil Conservation Division GIS Hub; Texas Railroad Commission; Bureau of Land Management; Freeport-McMoRan; Kinross Gold; Rio Tinto Kennecott; U.S. Energy Information Administration.</p>
+      <h4>Additional pass — not independently verified</h4>
+      <p class="source-list">EIA 2024 coal data and oil/gas reserves; BLM Pinedale Anticline (Wyoming); California CalGEM WellSTAR; Mine Safety and Health Administration fatality report; Capstone Copper (Pinto Valley); ASARCO (Ray Mine); KGHM (Robinson Mine); OceanaGold (Haile); Barrick (Nevada Gold Mines); Coeur Mining (Kensington); Kinross (Bald Mountain and operations directory); Northern Star (Pogo); SSR Mining (Cripple Creek &amp; Victor); Cleveland-Cliffs (iron ore facilities and acquisition); U.S. Steel (mining operations); ConocoPhillips Alaska; Heidelberg Materials (aggregates and cement); Holcim (Alpena, Midlothian, Ste. Genevieve); Martin Marietta (locations and Beckmann Quarry); Vulcan Materials (facilities); CalPortland (locations).</p>
+
+      <h3>Indigenous land and community data</h3>
+      <p class="source-list">Bureau of Indian Affairs AIANNH boundary data; U.S. Census Bureau TIGER/Line; Federal Register tribal recognition notices; individual tribal government websites.</p>
+      <h4>Additional pass — not independently verified</h4>
+      <p class="source-list">Census TIGERweb AIANNHA MapServer (layers 2 and 47); Census TIGER/Line files; Bureau of Indian Affairs AIAN Tribal Statistical Areas; Data.gov.</p>
+      <p class="source-note">The source map notes that research was concentrated in states with active MMIP task forces or substantial investigative reporting. The sources therefore reflect gaps in reporting and should not be treated as a complete account of the crisis.</p>
+    </section>
 
     <section class="slide references">
       <h2 class="reveal">References</h2>
