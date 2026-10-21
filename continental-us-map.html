@@ -17,7 +17,7 @@
     .photo-slide { position:relative; isolation:isolate; color:var(--paper); background:#252525 url("presentation-assets/image4.jpeg") center/cover no-repeat; }.photo-slide::before { content:""; position:absolute; inset:0; z-index:-1; background:rgba(0,0,0,.53); }.photo-slide h2,.photo-slide .copy-grid { width:min(1160px,100%); }.photo-slide li { color:var(--paper); }.photo-slide .credit { margin-top:32px; text-align:center; font-size:16px; }
     .map-only { position:relative; min-height:100vh; padding:0; background:var(--blue); border:0; }.map-only iframe { display:block; width:100%; height:100vh; border:0; background:var(--blue); }.map-only .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }.continue-scroll { position:absolute; right:22px; bottom:22px; z-index:2; border:1px solid var(--paper); background:var(--ink); color:var(--paper); padding:10px 14px; cursor:pointer; font:16px Georgia,"Times New Roman",serif; box-shadow:3px 3px 0 rgba(0,0,0,.3); }
     .source-title { background:var(--paper); }.source-title h2 { margin:0; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2,.references h3 { color:var(--peach); }.references h3 { margin-top:34px; }.references li { font-size:16px; line-height:1.42; }.references a { color:var(--paper); text-underline-offset:3px; }
-    .data-sources { min-height:auto; justify-content:flex-start; background:var(--paper); }.data-sources h2 { margin-bottom:20px; }.data-sources h3 { margin:32px 0 12px; font-size:28px; }.data-sources h4 { margin:24px 0 8px; font-size:19px; }.data-sources p { max-width:1160px; }.data-sources .source-note { color:var(--muted); font-size:16px; }.data-sources .source-list { font-size:17px; line-height:1.65; }
+    .sources-divider { min-height:0; padding-top:48px; padding-bottom:48px; background:var(--ink); color:var(--paper); }.sources-divider h2 { margin-bottom:0; }.data-sources { min-height:auto; justify-content:flex-start; padding-top:48px; background:var(--paper); }.data-sources h2 { margin-bottom:20px; }.data-sources h3 { margin:32px 0 12px; font-size:28px; }.data-sources h4 { margin:24px 0 8px; font-size:19px; }.data-sources p { max-width:1160px; }.data-sources .source-note { color:var(--muted); font-size:16px; }.data-sources .source-list { font-size:17px; line-height:1.65; }
     .reveal { opacity:0; transform:translateY(24px); transition:opacity .5s ease,transform .5s ease; }.reveal.visible { opacity:1; transform:none; } @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
     @media (max-width:800px) { .site-nav { padding:12px 18px; }.site-nav nav { display:none; }.slide { padding-left:7vw; padding-right:7vw; }.copy-grid { grid-template-columns:1fr; }.map-only iframe { height:100svh; }.photo-slide { background-position:60% center; } }
   </style>
@@ -161,7 +161,10 @@
       </div>
     </section>
 
-    <section class="slide data-sources" id="sources" aria-label="Data Sources">
+    <section class="slide sources-divider" id="sources"><h2>Sources</h2></section>
+
+    <section class="slide data-sources" aria-labelledby="data-sources-heading">
+      <h2 id="data-sources-heading">Data Sources</h2>
       <p>Outlets, agencies, and datasets consulted for the four map datasets, grouped by topic. Some sources serve more than one category.</p>
       <p class="source-note">The supplied source map distinguishes the original collection from an additional research pass. The additional pass is described there as not independently verified; its entries should be checked against the original sources before use.</p>
 
