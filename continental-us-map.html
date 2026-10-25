@@ -18,12 +18,12 @@
     .photo-slide { position:relative; isolation:isolate; color:var(--paper); background:#252525 url("presentation-assets/image4.jpeg") center/cover no-repeat; }.photo-slide::before { content:""; position:absolute; inset:0; z-index:-1; background:rgba(0,0,0,.53); }.photo-slide h2,.photo-slide .copy-grid { width:min(1160px,100%); }.photo-slide li { color:var(--paper); }.photo-slide .credit { margin-top:32px; text-align:center; font-size:16px; }
     .map-only { position:relative; min-height:100vh; padding:0; background:var(--blue); border:0; }.map-only iframe { display:block; width:100%; height:100vh; border:0; background:var(--blue); }.map-only .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }.continue-scroll { position:absolute; right:22px; bottom:22px; z-index:2; border:1px solid var(--paper); background:var(--ink); color:var(--paper); padding:10px 14px; cursor:pointer; font:16px Georgia,"Times New Roman",serif; box-shadow:3px 3px 0 rgba(0,0,0,.3); }
     .map-only { justify-content:flex-start; }.map-only iframe { height:calc(100vh - 64px); flex:none; }.map-only .continue-scroll { position:static; width:auto; flex:none; align-self:center; margin:10px auto; }
-    .map-transition { min-height:30vh; padding:0; border:0; background:var(--ink); }
+    .map-transition { min-height:30vh; padding:0; border:0; background:linear-gradient(135deg,#dcecf2 0%,#b9d5df 30%,#d9b5a8 68%,#f3c7ac 100%); }
     .map-transition.has-title { padding:55px 8vw; color:var(--paper); }.map-transition.has-title h2 { margin-top:0; margin-bottom:0; }
-    .source-title { background:var(--paper); }.source-title h2 { margin:0; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2,.references h3 { color:var(--peach); }.references h3 { margin-top:34px; }.references li { font-size:16px; line-height:1.42; }.references a { color:var(--paper); text-underline-offset:3px; }
-    .sources-divider { min-height:40vh; padding-top:72px; padding-bottom:72px; background:var(--ink); color:var(--paper); }.sources-divider h2 { margin-bottom:0; }.data-sources { min-height:auto; justify-content:flex-start; padding-top:48px; background:var(--paper); }.data-sources h2 { margin-bottom:20px; }.data-sources h3 { margin:32px 0 12px; font-size:28px; }.data-sources h4 { margin:24px 0 8px; font-size:19px; }.data-sources p { max-width:1160px; }.data-sources .source-note { color:var(--muted); font-size:16px; }.data-sources .source-list { font-size:17px; line-height:1.65; }
+    #timeline iframe { height:calc(100vh + 90px); }.source-title { background:var(--ink); color:var(--paper); }.source-title h2 { margin:0; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2,.references h3 { color:var(--peach); }.references h3 { margin-top:34px; }.references li { font-size:16px; line-height:1.42; }.references a { color:var(--paper); text-underline-offset:3px; }
+    .sources-divider { min-height:40vh; padding-top:72px; padding-bottom:72px; background:var(--ink); color:var(--paper); }.sources-divider h2 { margin-bottom:0; }.data-sources { min-height:auto; justify-content:flex-start; padding-top:48px; background:var(--ink); color:var(--paper); }.data-sources h2,.data-sources h3,.data-sources h4 { color:var(--peach); }.data-sources h2 { margin-bottom:20px; }.data-sources h3 { margin:32px 0 12px; font-size:28px; }.data-sources h4 { margin:24px 0 8px; font-size:19px; }.data-sources p { max-width:1160px; }.data-sources .source-note { color:#d9cec7; font-size:16px; }.data-sources .source-list { font-size:17px; line-height:1.65; }
     .reveal { opacity:0; transform:translateY(24px); transition:opacity .5s ease,transform .5s ease; }.reveal.visible { opacity:1; transform:none; } @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
-    @media (max-width:800px) { .site-nav { padding:12px 18px; }.site-nav nav { display:none; }.slide { padding-left:7vw; padding-right:7vw; }.copy-grid { grid-template-columns:1fr; }.map-only { padding-left:0; padding-right:0; }.map-only iframe { height:calc(100svh - 64px); }.photo-slide { background-position:60% center; } }
+    @media (max-width:800px) { .site-nav { padding:12px 18px; }.site-nav nav { display:none; }.slide { padding-left:7vw; padding-right:7vw; }.copy-grid { grid-template-columns:1fr; }.map-only { padding-left:0; padding-right:0; }.map-only iframe { height:calc(100svh - 64px); }#timeline iframe { height:calc(100svh + 90px); }.photo-slide { background-position:60% center; } }
   </style>
 </head>
 <body>
@@ -35,7 +35,7 @@
   </header>
   <main id="top">
     <section class="slide cover">
-      <h1 class="reveal">Oil, Sweat, and Tears</h1>
+      <h1 class="reveal">The Cost of Jurisdiction</h1>
       <p class="reveal">What the correlation – and lack thereof – between the missing and murdered Indigenous persons crisis (MMIP) and resource extraction could mean.</p>
       <div class="scroll-cue reveal">Scroll to explore</div>
     </section>
