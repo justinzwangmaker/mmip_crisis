@@ -21,6 +21,7 @@
     .map-only { justify-content:flex-start; }.map-only iframe { height:calc(100vh - 64px); flex:none; }.map-only .continue-scroll { position:static; width:auto; flex:none; align-self:center; margin:10px auto; }
     .map-transition { min-height:30vh; padding:0; border:0; background:linear-gradient(135deg,#dcecf2 0%,#b9d5df 30%,#d9b5a8 68%,#f3c7ac 100%); }
     .map-transition.has-title { padding:55px 8vw; color:var(--paper); }.map-transition.has-title h2 { margin-top:0; margin-bottom:0; }
+    .content-transition { min-height:18vh; padding:0; border:0; }.content-transition.to-content { background:linear-gradient(180deg,#252525 0%,#614d45 34%,#b78470 70%,#f3c7ac 100%); }.content-transition.to-sources { background:linear-gradient(180deg,#f3c7ac 0%,#b78470 38%,#614d45 72%,#252525 100%); }
     #timeline iframe { height:calc(100vh + 90px); }.source-title { background:var(--ink); color:var(--paper); }.source-title h2 { margin:0; }.references { min-height:auto; padding-bottom:100px; background:var(--ink); color:var(--paper); }.references h2,.references h3 { color:var(--peach); }.references h3 { margin-top:34px; }.references li { font-size:16px; line-height:1.42; }.references a { color:var(--paper); text-underline-offset:3px; }
     .sources-divider { min-height:40vh; padding-top:72px; padding-bottom:72px; background:var(--ink); color:var(--paper); }.sources-divider h2 { max-width:900px; margin-bottom:0; font-size:clamp(30px,4.5vw,58px); }.sources-divider h2 span { display:block; }.sources-divider .creator-label { margin-bottom:14px; color:var(--peach); font-size:.58em; letter-spacing:.07em; text-transform:uppercase; }.data-sources { min-height:auto; justify-content:flex-start; padding-top:48px; background:var(--ink); color:var(--paper); }.data-sources h2,.data-sources h3,.data-sources h4 { color:var(--peach); }.data-sources h2 { margin-bottom:20px; }.data-sources h3 { margin:32px 0 12px; font-size:28px; }.data-sources h4 { margin:24px 0 8px; font-size:19px; }.data-sources p { max-width:1160px; }.data-sources .source-note { color:#d9cec7; font-size:16px; }.data-sources .source-list { font-size:17px; line-height:1.65; }
     .reveal { opacity:0; transform:translateY(24px); transition:opacity .5s ease,transform .5s ease; }.reveal.visible { opacity:1; transform:none; } @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}}
@@ -40,6 +41,7 @@
       <p class="reveal">What the correlation – and lack thereof – between the missing and murdered Indigenous persons crisis (MMIP) and resource extraction could mean.</p>
       <div class="scroll-cue reveal">Scroll to explore</div>
     </section>
+    <section class="slide content-transition to-content" aria-hidden="true"></section>
 
     <section class="slide" id="crisis">
       <h2 class="reveal">Crisis Overview</h2>
@@ -175,6 +177,7 @@
         </div>
       </div>
     </section>
+    <section class="slide content-transition to-sources" aria-hidden="true"></section>
 
     <section class="slide sources-divider" id="sources"><h2><span class="creator-label">Creators</span><span>Justin Zenin Wang, The Overlake School</span><span>Bo Zhao, Ph.D., University of Washington</span></h2></section>
 
