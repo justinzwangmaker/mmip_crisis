@@ -61,12 +61,13 @@
     .timeline-controls select { border-radius:0; border-color:#252525; background:#fffaf5; color:#252525; font-family:Georgia, "Times New Roman", serif; }.timeline-year { border-radius:0; background:#252525; }.authority-box { border-radius:0; }.land-symbol { border-radius:0; background:#fff1e6; border-color:#8f6957; }
     .embed-mode .story-panel { display:none; }.embed-mode main { padding-left:0; }.embed-mode .map-header-box { left:22px; width:min(410px,calc(100vw - 44px)); }.embed-mode .control { left:22px; }.embed-mode .research-view { left:0; }.embed-mode .timeline-explorer { left:22px; }
     .embed-mode .map-header-box { box-sizing:border-box; width:min(250px,calc(50vw - 36px)); }.embed-mode .map-header-box.is-collapsed { width:auto; }.embed-mode .layer-controls { left:auto; right:22px; }
+    .cases-only .map-header-box, .cases-only .layer-controls, .cases-only .legend, .cases-only .control { display:none; }
     @media (max-width:850px) { .embed-mode .legend { display:none; } }
     @media (max-width:620px) { .legend { display:none; } #case-panel { max-height:45vh; } }
   </style>
 </head>
 <body>
-  <script>if (new URLSearchParams(location.search).has("embed")) document.body.classList.add("embed-mode");</script>
+  <script>const mapParams=new URLSearchParams(location.search); if (mapParams.has("embed")) document.body.classList.add("embed-mode"); if (mapParams.get("layers")==="cases") document.body.classList.add("cases-only");</script>
   <main aria-label="United States map of documented MMIP cases">
     <svg id="map" role="img" aria-labelledby="map-title map-desc">
       <title id="map-title">Documented MMIP cases</title>
@@ -175,6 +176,7 @@
     const regionCenters = {"Permian Basin regional network (multiple lodges)":[-103.15,31.55],"Bakken Basin regional network (multiple lodges)":[-103.55,47.80],"Eagle Ford Shale":[-98.05,28.35],"Marcellus / Utica Shale":[-80.20,40.70],"Powder River Basin":[-105.40,44.30],"Anadarko Basin / SCOOP-STACK":[-98.10,35.00],"North Slope":[-148.50,70.20]};
     const basinRadiiKm = {"San Juan Basin gas field (general area)":100,"Permian Basin (general area)":190,"Mesabi Iron Range (general area)":110,"Carlin Trend (general area)":95,"Prudhoe Bay Oil Field":80,"Eagle Ford Shale (general area)":150,"Marcellus Shale (general area)":200};
     const main = document.querySelector("main"), svg = d3.select("#map"), content = svg.select("#map-content"), statesLayer = svg.select("#states"), caseZonesLayer = svg.select("#case-zones"), communityZonesLayer = svg.select("#community-zones"), communitiesLayer = svg.select("#communities"), basinsLayer = svg.select("#basins"), extractionZonesLayer = svg.select("#extraction-zones"), extractionLayer = svg.select("#extraction-sites"), campZonesLayer = svg.select("#camp-zones"), campsLayer = svg.select("#camps"), regionsLayer = svg.select("#regions"), clustersLayer = svg.select("#clusters"), casesLayer = svg.select("#cases"), scaleBar = svg.select("#scale-bar");
+    const casesOnly = new URLSearchParams(location.search).get("layers") === "cases";
     const panel = document.getElementById("case-panel"), details = document.getElementById("case-details"), status = document.getElementById("status");
     const states = feature(us, us.objects.states), borders = mesh(us, us.objects.states, (a,b) => a !== b);
     let projection, path, records = [], facilities = [], regions = [], extractionSites = [], extractionBasins = [], communities = [], transform = d3.zoomIdentity;
@@ -301,6 +303,7 @@
     document.getElementById("toggle-basins").addEventListener("change", event => basinsLayer.style("display", event.target.checked ? null : "none"));
     document.getElementById("toggle-communities").addEventListener("change", event => setLayerVisible([communitiesLayer], event.target.checked));
     document.getElementById("toggle-community-zones").addEventListener("change", event => setLayerVisible([communityZonesLayer], event.target.checked));
+    if (casesOnly) ["toggle-case-zones","toggle-camps","toggle-camp-zones","toggle-camp-regions","toggle-sites","toggle-extraction-zones","toggle-basins","toggle-communities","toggle-community-zones"].forEach(id => { const input=document.getElementById(id); input.checked=false; input.dispatchEvent(new Event("change")); });
     function positioned() { return records.map(d => ({...d, xy: projection(d.coordinates)})).filter(d => d.xy); }
     function declutter(points) {
       const used = []; const separation = 12 / transform.k;
@@ -390,7 +393,7 @@
     function drawBase() {
       const {width, height} = mapSize(); svg.attr("viewBox", `0 0 ${width} ${height}`);
       let extent = [[18,76],[width-18,height-18]];
-      if (document.body.classList.contains("embed-mode")) {
+      if (document.body.classList.contains("embed-mode") && !casesOnly) {
         const bounds = svg.node().getBoundingClientRect();
         if (width > 850) {
           const left = document.getElementById("map-header-box").getBoundingClientRect().right - bounds.left + 16;
